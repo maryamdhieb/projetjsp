@@ -1,0 +1,2236 @@
+Index: src/main/java/org/example/service/CategoryService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.example.service;\r\n\r\nimport org.example.model.Category;\r\nimport org.example.repository.CategroyRepository;\r\n\r\nimport java.util.List;\r\n\r\npublic class CategoryService {\r\n\r\n    private final CategroyRepository categroyRepository;\r\n\r\n    public CategoryService() {\r\n        this.categroyRepository = new CategroyRepository();\r\n    }\r\n\r\n    public List<Category> getAllCategories() {\r\n        return categroyRepository.getAllCategories();\r\n    }\r\n\r\n    public void addCategory(Category category) {\r\n        categroyRepository.addCategory(category); // utiliser l'instance et non la classe\r\n    }\r\n\r\n    public void updateCategory(String originalName, Category updatedCategory) {\r\n        categroyRepository.updateCategory(originalName, updatedCategory);\r\n    }\r\n\r\n    public void deleteCategory(String name) {\r\n        categroyRepository.deleteCategory(name);\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/service/CategoryService.java b/src/main/java/org/example/service/CategoryService.java
+--- a/src/main/java/org/example/service/CategoryService.java	(revision 79d1f1bcf78529e5ac226f9759a79e3801b65519)
++++ b/src/main/java/org/example/service/CategoryService.java	(date 1765293560128)
+@@ -1,16 +1,16 @@
+ package org.example.service;
+ 
+ import org.example.model.Category;
+-import org.example.repository.CategroyRepository;
++import org.example.repository.CategoryRepository;
+ 
+ import java.util.List;
+ 
+ public class CategoryService {
+ 
+-    private final CategroyRepository categroyRepository;
++    private final CategoryRepository categroyRepository;
+ 
+     public CategoryService() {
+-        this.categroyRepository = new CategroyRepository();
++        this.categroyRepository = new CategoryRepository();
+     }
+ 
+     public List<Category> getAllCategories() {
+@@ -21,11 +21,12 @@
+         categroyRepository.addCategory(category); // utiliser l'instance et non la classe
+     }
+ 
+-    public void updateCategory(String originalName, Category updatedCategory) {
+-        categroyRepository.updateCategory(originalName, updatedCategory);
++    public boolean updateCategory(int id, Category updatedCategory) {
++        categroyRepository.updateCategory( id, updatedCategory);
++        return false;
+     }
+ 
+-    public void deleteCategory(String name) {
+-        categroyRepository.deleteCategory(name);
++    public void deleteCategory(int id) {
++        categroyRepository.deleteCategory(id);
+     }
+ }
+Index: src/main/java/org/example/model/Product.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.example.model;\r\n\r\nimport javax.swing.*;\r\n\r\npublic class Product {\r\n    private int id;\r\n    private String name;\r\n    private double price;\r\n    private String description;\r\n    private Promotion promotion;\r\n\r\n    public Product( int id , String name, double price, String description) {\r\n        this.id = id;\r\n        this.name = name;\r\n        this.price = price;\r\n        this.description = description;\r\n        this.promotion = null; // par défaut, pas de promotion\r\n    }\r\n\r\n    public int getId() {\r\n        return id;\r\n    }\r\n\r\n    public void setId(int id) {\r\n        this.id = id;\r\n    }\r\n\r\n    // getters & setters\r\n    public String getName() { return name; }\r\n    public void setName(String name) { this.name = name; }\r\n\r\n    public double getPrice() { return price; }\r\n    public void setPrice(double price) { this.price = price; }\r\n\r\n    public String getDescription() { return description; }\r\n    public void setDescription(String description) { this.description = description; }\r\n    public Promotion getPromotion() { return promotion; }\r\n    public void setPromotion(Promotion promotion) { this.promotion = promotion; }\r\n    public boolean isOnPromotion() {\r\n        return promotion != null && promotion.isActive();\r\n    }\r\n\r\n\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/model/Product.java b/src/main/java/org/example/model/Product.java
+--- a/src/main/java/org/example/model/Product.java	(revision 79d1f1bcf78529e5ac226f9759a79e3801b65519)
++++ b/src/main/java/org/example/model/Product.java	(date 1764856361019)
+@@ -1,22 +1,32 @@
+ package org.example.model;
+ 
+-import javax.swing.*;
+-
+ public class Product {
+     private int id;
+     private String name;
+     private double price;
+     private String description;
+-    private Promotion promotion;
++    private double Quantity;
++    private String imageUrl;
++    private boolean promo;
++    private double discount;
++    private double promoPrice;
+ 
+-    public Product( int id , String name, double price, String description) {
++    public Product( int id , String name, double price, String description , double quantity , String imageUrl) {
+         this.id = id;
+         this.name = name;
+         this.price = price;
+         this.description = description;
+-        this.promotion = null; // par défaut, pas de promotion
++        this.Quantity = quantity;
++        this.imageUrl = imageUrl;
++        this.promo = false; // par défaut, pas de promotion
+     }
+-
++    public Product(int id, String name, double price, String description, double quantity, String imageUrl  ,
++                   boolean promo, double discount, double promoPrice) {
++        this(id, name, price , description , quantity , imageUrl);
++        this.promo = promo;
++        this.discount = discount;
++        this.promoPrice = promoPrice;
++    }
+     public int getId() {
+         return id;
+     }
+@@ -34,10 +44,39 @@
+ 
+     public String getDescription() { return description; }
+     public void setDescription(String description) { this.description = description; }
+-    public Promotion getPromotion() { return promotion; }
+-    public void setPromotion(Promotion promotion) { this.promotion = promotion; }
+-    public boolean isOnPromotion() {
+-        return promotion != null && promotion.isActive();
++
++    public  boolean isPromo() {
++        return promo;
++    }
++    public void setPromo(boolean promo) {
++        this.promo = promo;
++
++    }
++    public double getDiscount() {
++        return discount;
++    }
++
++    public void setDiscount(double discount) {
++        this.discount = this.discount;
++    }
++    public double getPromoPrice() {
++        return promoPrice;
++    }
++    public void setPromoPrice(double promoPrice) {
++        this.promoPrice = promoPrice;
++    }
++
++    public String getImageUrl() {
++        return imageUrl;
++    }
++    public void setImageUrl(String imageUrl) {
++        this.imageUrl = imageUrl;
++    }
++    public double getQuantity() {
++        return Quantity;
++    }
++    public void setQuantity(double quantity) {
++        Quantity = quantity;
+     }
+ 
+ 
+Index: src/main/java/org/example/controller/CategoryController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.example.controller;\r\n\r\nimport jakarta.servlet.ServletException;\r\nimport jakarta.servlet.annotation.WebServlet;\r\nimport jakarta.servlet.http.HttpServlet;\r\nimport jakarta.servlet.http.HttpServletRequest;\r\nimport jakarta.servlet.http.HttpServletResponse;\r\nimport org.example.model.Category;\r\nimport org.example.service.CategoryService;\r\n\r\nimport java.io.IOException;\r\nimport java.util.List;\r\n\r\n@WebServlet(name = \"CategoryController\", urlPatterns = \"/categories\")\r\npublic class CategoryController extends HttpServlet {\r\n\r\n    private CategoryService categoryService;\r\n\r\n    @Override\r\n    public void init() throws ServletException {\r\n        categoryService = new CategoryService();\r\n    }\r\n\r\n    @Override\r\n    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {\r\n        List<Category> categories = categoryService.getAllCategories();\r\n\r\n        request.setCharacterEncoding(\"UTF-8\");\r\n        response.setCharacterEncoding(\"UTF-8\");\r\n\r\n        request.setAttribute(\"categories\", categories);\r\n        request.setAttribute(\"contextPath\", request.getContextPath());\r\n\r\n        request.getRequestDispatcher(\"categories.jsp\").forward(request, response);\r\n    }\r\n\r\n    @Override\r\n    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {\r\n        request.setCharacterEncoding(\"UTF-8\");\r\n        response.setCharacterEncoding(\"UTF-8\");\r\n\r\n        String action = request.getParameter(\"action\");\r\n\r\n        if (\"add\".equals(action)) {\r\n            String name = request.getParameter(\"name\");\r\n            String description = request.getParameter(\"description\");\r\n            Category category = new Category(name, description);\r\n            categoryService.addCategory(category);\r\n\r\n        } else if (\"edit\".equals(action)) {\r\n            String originalName = request.getParameter(\"originalName\");\r\n            String newName = request.getParameter(\"name\");\r\n            String description = request.getParameter(\"description\");\r\n            Category updatedCategory = new Category(newName, description);\r\n            categoryService.updateCategory(originalName, updatedCategory);\r\n\r\n        } else if (\"delete\".equals(action)) {\r\n            String name = request.getParameter(\"name\");\r\n            categoryService.deleteCategory(name);\r\n        }\r\n\r\n        response.sendRedirect(request.getContextPath() + \"/categories\");\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/controller/CategoryController.java b/src/main/java/org/example/controller/CategoryController.java
+--- a/src/main/java/org/example/controller/CategoryController.java	(revision 79d1f1bcf78529e5ac226f9759a79e3801b65519)
++++ b/src/main/java/org/example/controller/CategoryController.java	(date 1765293560115)
+@@ -48,15 +48,24 @@
+             categoryService.addCategory(category);
+ 
+         } else if ("edit".equals(action)) {
+-            String originalName = request.getParameter("originalName");
++            int id = Integer.parseInt(request.getParameter("id"));
+             String newName = request.getParameter("name");
+             String description = request.getParameter("description");
+-            Category updatedCategory = new Category(newName, description);
+-            categoryService.updateCategory(originalName, updatedCategory);
+ 
+-        } else if ("delete".equals(action)) {
+-            String name = request.getParameter("name");
+-            categoryService.deleteCategory(name);
++            // On crée un Category temporaire pour mise à jour
++            Category updatedCategory = new Category();
++            updatedCategory.setName(newName);
++            updatedCategory.setDescription(description);
++
++            boolean success = categoryService.updateCategory(id, updatedCategory);
++            if (!success) {
++                // gérer l'erreur si l'id n'existe pas
++                request.setAttribute("error", "Catégorie introuvable !");
++            }
++        }
++        else if ("delete".equals(action)) {
++            int id = Integer.parseInt(request.getParameter("id"));
++            categoryService.deleteCategory(id);
+         }
+ 
+         response.sendRedirect(request.getContextPath() + "/categories");
+Index: src/main/java/org/example/model/Category.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.example.model;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class Category {\r\n    private  int id;\r\n    private String name;\r\n    private String description;\r\n    private List<Product> products;\r\n\r\n    // Constructeur principal avec la liste des produits\r\n    public Category(int id , String name, String description, List<Product> products) {\r\n        this.id = id;\r\n        this.name = name;\r\n        this.description = description;\r\n        this.products = products;\r\n    }\r\n\r\n    // Constructeur pratique pour créer une catégorie sans produits\r\n    public Category(String name, String description) {\r\n        this.name = name;\r\n        this.description = description;\r\n        this.products = new ArrayList<>(); // initialise la liste vide\r\n    }\r\n\r\n    public int getId() {\r\n        return id;\r\n    }\r\n    public void setId(int id) {\r\n        this.id = id;\r\n    }\r\n    public String getName() {\r\n        return name;\r\n    }\r\n\r\n    public void setName(String name) {\r\n        this.name = name;\r\n    }\r\n\r\n    public String getDescription() {\r\n        return description;\r\n    }\r\n\r\n    public void setDescription(String description) {\r\n        this.description = description;\r\n    }\r\n\r\n    public List<Product> getProducts() {\r\n        return products;\r\n    }\r\n\r\n    public void setProducts(List<Product> products) {\r\n        this.products = products;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/model/Category.java b/src/main/java/org/example/model/Category.java
+--- a/src/main/java/org/example/model/Category.java	(revision 79d1f1bcf78529e5ac226f9759a79e3801b65519)
++++ b/src/main/java/org/example/model/Category.java	(date 1765293560144)
+@@ -2,18 +2,20 @@
+ 
+ import java.util.ArrayList;
+ import java.util.List;
+-
+ public class Category {
+     private  int id;
+     private String name;
+     private String description;
++    private String imageUrl;
+     private List<Product> products;
+ 
++    public  Category() {}
+     // Constructeur principal avec la liste des produits
+-    public Category(int id , String name, String description, List<Product> products) {
++    public Category(int id , String name, String description, String imageUrl , List<Product> products ) {
+         this.id = id;
+         this.name = name;
+         this.description = description;
++        this.imageUrl = imageUrl;
+         this.products = products;
+     }
+ 
+@@ -53,4 +55,11 @@
+     public void setProducts(List<Product> products) {
+         this.products = products;
+     }
++
++    public String getImageUrl() {
++        return imageUrl;
++    }
++    public void setImageUrl(String imageUrl) {
++        this.imageUrl = imageUrl;
++    }
+ }
+Index: src/main/webapp/categories.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><%@ page contentType=\"text/html;charset=UTF-8\" language=\"java\" %>\r\n<%@ page import=\"java.util.List\" %>\r\n<%@ page import=\"org.example.model.Category\" %>\r\n<%@ page import=\"org.example.model.Product\" %>\r\n<!DOCTYPE html>\r\n<html>\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <title>Catégories et Produits</title>\r\n    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\r\n    <style>\r\n        body { background: #f8f9fa; color: #343a40; }\r\n        .card-category { transition: transform .15s ease, box-shadow .15s ease; }\r\n        .card-category:hover { transform: translateY(-6px); box-shadow: 0 10px 24px rgba(0,0,0,0.08); }\r\n        .product-badge { font-size: 0.85rem; }\r\n        .product-actions .btn { padding: .25rem .5rem; font-size: .85rem; }\r\n    </style>\r\n</head>\r\n<body>\r\n<jsp:include page=\"shared/navbar/navbar.jsp\" />\r\n\r\n<div class=\"container my-5\">\r\n    <h1 class=\"mb-4 text-center\">Gestion des Catégories et Produits</h1>\r\n\r\n    <div class=\"text-end mb-3\">\r\n        <!-- Bouton Ajouter catégorie -->\r\n        <button class=\"btn btn-sm btn-success\" data-bs-toggle=\"modal\" data-bs-target=\"#addCategoryModal\">\r\n            + Ajouter catégorie\r\n        </button>\r\n    </div>\r\n\r\n<%\r\n    List<Category> categories = (List<Category>) request.getAttribute(\"categories\");\r\n    String cp = request.getContextPath();\r\n    if (categories != null && !categories.isEmpty()) {\r\n%>\r\n    <div class=\"row g-4\">\r\n        <% for (Category cat : categories) { %>\r\n        <div class=\"col-12 col-md-6 col-lg-4\">\r\n            <div class=\"card category-card h-100 shadow-sm\">\r\n                <div class=\"card-body d-flex flex-column\">\r\n                    <div class=\"d-flex justify-content-between align-items-start\">\r\n                        <div>\r\n                            <h4 class=\"card-title text-primary\"><%= cat.getName() %></h4>\r\n                            <p class=\"card-text text-muted\"><%= cat.getDescription() != null ? cat.getDescription() : \"(Pas de description)\" %></p>\r\n                        </div>\r\n                        <div class=\"text-end\">\r\n                            <!-- Actions catégorie -->\r\n                            <button class=\"btn btn-outline-primary btn-sm edit-category-btn\"\r\n                                    data-bs-toggle=\"modal\" data-bs-target=\"#editCategoryModal\"\r\n                                    data-name=\"<%= cat.getName() %>\"\r\n                                    data-desc=\"<%= cat.getDescription() != null ? cat.getDescription().replace(\"\\\"\",\"'\") : \"\" %>\">\r\n                                Modifier\r\n                            </button>\r\n\r\n                            <form class=\"d-inline\" method=\"post\" action=\"<%= cp %>/categories\" onsubmit=\"return confirm('Confirmez-vous la suppression de cette catégorie ?');\">\r\n                                <input type=\"hidden\" name=\"action\" value=\"delete\"/>\r\n                                <input type=\"hidden\" name=\"name\" value=\"<%= cat.getName() %>\"/>\r\n                                <button type=\"submit\" class=\"btn btn-outline-danger btn-sm\">Delete</button>\r\n                            </form>\r\n\r\n                            <!-- Ajouter produit -->\r\n                            <button class=\"btn btn-sm btn-success mt-2\" data-bs-toggle=\"modal\" data-bs-target=\"#addProductModal\"\r\n                                    data-category=\"<%= cat.getName() %>\">\r\n                                + Add product\r\n                            </button>\r\n\r\n                            <div class=\"badge bg-info text-dark product-badge mt-1\"><%= cat.getProducts() != null ? cat.getProducts().size() : 0 %> produits</div>\r\n                        </div>\r\n                    </div>\r\n\r\n                    <h6 class=\"mt-3\">Produits :</h6>\r\n                    <ul class=\"list-group list-group-flush\">\r\n                        <%\r\n                            List<Product> products = cat.getProducts();\r\n                            if (products != null && !products.isEmpty()) {\r\n                                for (Product product : products) {\r\n                        %>\r\n                        <li class=\"list-group-item d-flex justify-content-between align-items-center\">\r\n                            <div style=\"max-width:55%;\"><strong><%= product.getName() %></strong><br/>\r\n                                <small class=\"text-muted\"><%= product.getDescription() != null ? product.getDescription() : \"\" %></small>\r\n                            </div>\r\n                            <div class=\"d-flex align-items-center gap-2\">\r\n                                <span class=\"badge bg-secondary product-badge\"><%= product.getPrice() %> €</span>\r\n                                <div class=\"product-actions\">\r\n                                    <!-- Modifier produit -->\r\n                                    <button class=\"btn btn-outline-primary btn-sm edit-product-btn\"\r\n                                            data-bs-toggle=\"modal\" data-bs-target=\"#editProductModal\"\r\n                                            data-category=\"<%= cat.getName() %>\"\r\n                                            data-name=\"<%= product.getName().replace(\"\\\"\",\"'\") %>\"\r\n                                            data-price=\"<%= product.getPrice() %>\"\r\n                                            data-desc=\"<%= product.getDescription() != null ? product.getDescription().replace(\"\\\"\",\"'\") : \"\" %>\">\r\n                                        Modify\r\n                                    </button>\r\n                                    <!-- Supprimer produit -->\r\n                                    <form class=\"d-inline\" method=\"post\" action=\"<%= cp %>/products\" onsubmit=\"return confirm('Confirmez-vous la suppression de ce produit ?');\">\r\n                                        <input type=\"hidden\" name=\"action\" value=\"delete\"/>\r\n                                        <input type=\"hidden\" name=\"category\" value=\"<%= cat.getName() %>\"/>\r\n                                        <input type=\"hidden\" name=\"productName\" value=\"<%= product.getName() %>\"/>\r\n                                        <button type=\"submit\" class=\"btn btn-outline-danger btn-sm\">Delete</button>\r\n                                    </form>\r\n                                </div>\r\n                            </div>\r\n                        </li>\r\n                        <%      }\r\n                            } else { %>\r\n                        <li class=\"list-group-item text-center text-muted\">Aucun produit pour cette catégorie.</li>\r\n                        <% } %>\r\n                    </ul>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <% } %>\r\n    </div>\r\n<% } else { %>\r\n    <div class=\"alert alert-info text-center\">Aucune catégorie trouvée.</div>\r\n<% } %>\r\n</div>\r\n\r\n<!-- Modals Catégorie -->\r\n<div class=\"modal fade\" id=\"addCategoryModal\">\r\n  <div class=\"modal-dialog\">\r\n    <form class=\"modal-content\" method=\"post\" action=\"<%= cp %>/categories\">\r\n        <input type=\"hidden\" name=\"action\" value=\"add\"/>\r\n      <div class=\"modal-header\"><h5 class=\"modal-title\">Add category</h5>\r\n        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\"></button></div>\r\n      <div class=\"modal-body\">\r\n          <div class=\"mb-3\"><label>Name</label><input required name=\"name\" class=\"form-control\"/></div>\r\n          <div class=\"mb-3\"><label>Description</label><textarea name=\"description\" class=\"form-control\"></textarea></div>\r\n      </div>\r\n      <div class=\"modal-footer\"><button type=\"submit\" class=\"btn btn-success\">Add</button></div>\r\n    </form>\r\n  </div>\r\n</div>\r\n\r\n<div class=\"modal fade\" id=\"editCategoryModal\">\r\n  <div class=\"modal-dialog\">\r\n    <form class=\"modal-content\" method=\"post\" action=\"<%= cp %>/categories\">\r\n        <input type=\"hidden\" name=\"action\" value=\"edit\"/>\r\n        <input type=\"hidden\" name=\"originalName\" id=\"edit-cat-originalName\"/>\r\n      <div class=\"modal-body\">\r\n          <div class=\"mb-3\"><label>Nom</label><input required name=\"name\" id=\"edit-cat-name\" class=\"form-control\"/></div>\r\n          <div class=\"mb-3\"><label>Description</label><textarea name=\"description\" id=\"edit-cat-desc\" class=\"form-control\"></textarea></div>\r\n      </div>\r\n      <div class=\"modal-footer\"><button type=\"submit\" class=\"btn btn-primary\">Save</button></div>\r\n    </form>\r\n  </div>\r\n</div>\r\n\r\n<!-- Modals Produit -->\r\n<div class=\"modal fade\" id=\"addProductModal\">\r\n  <div class=\"modal-dialog\">\r\n    <form class=\"modal-content\" method=\"post\" action=\"<%= cp %>/products\">\r\n        <input type=\"hidden\" name=\"action\" value=\"add\"/>\r\n        <input type=\"hidden\" name=\"category\" id=\"add-category\"/>\r\n      <div class=\"modal-header\"><h5 class=\"modal-title\">Add product to</h5>\r\n        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\"></button></div>\r\n      <div class=\"modal-body\">\r\n          <div class=\"mb-3\"><label>Name</label><input required name=\"name\" class=\"form-control\"/></div>\r\n          <div class=\"mb-3\"><label>Price(€)</label><input required name=\"price\" type=\"number\" step=\"0.01\" class=\"form-control\"/></div>\r\n          <div class=\"mb-3\"><label>Description</label><textarea required name=\"description\" class=\"form-control\"></textarea></div>\r\n      </div>\r\n      <div class=\"modal-footer\"><button type=\"submit\" class=\"btn btn-success\">Add</button></div>\r\n    </form>\r\n  </div>\r\n</div>\r\n\r\n<div class=\"modal fade\" id=\"editProductModal\">\r\n  <div class=\"modal-dialog\">\r\n    <form class=\"modal-content\" method=\"post\" action=\"<%= cp %>/products\">\r\n        <input type=\"hidden\" name=\"action\" value=\"edit\"/>\r\n        <input type=\"hidden\" name=\"category\" id=\"edit-category\"/>\r\n        <input type=\"hidden\" name=\"originalName\" id=\"edit-originalName\"/>\r\n      <div class=\"modal-body\">\r\n          <div class=\"mb-3\"><label>Nom</label><input required name=\"name\" id=\"edit-name\" class=\"form-control\"/></div>\r\n          <div class=\"mb-3\"><label>Prix (€)</label><input required name=\"price\" id=\"edit-price\" type=\"number\" step=\"0.01\" class=\"form-control\"/></div>\r\n          <div class=\"mb-3\"><label>Description</label><input required name=\"description\" id=\"edit-desc\" class=\"form-control\"/></div>\r\n      </div>\r\n      <div class=\"modal-footer\"><button type=\"submit\" class=\"btn btn-primary\">Save</button></div>\r\n    </form>\r\n  </div>\r\n</div>\r\n\r\n<script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js\"></script>\r\n<script>\r\n    // Pré-remplir modal ajout produit\r\n    document.addEventListener('click', function(e){\r\n        const addBtn = e.target.closest('[data-bs-target=\"#addProductModal\"]');\r\n        if (addBtn) document.getElementById('add-category').value = addBtn.getAttribute('data-category') || '';\r\n    });\r\n\r\n    // Pré-remplir modal édition produit\r\n    document.querySelectorAll('.edit-product-btn').forEach(btn=>{\r\n        btn.addEventListener('click', ()=>{\r\n            document.getElementById('edit-category').value = btn.getAttribute('data-category');\r\n            document.getElementById('edit-originalName').value = btn.getAttribute('data-name');\r\n            document.getElementById('edit-name').value = btn.getAttribute('data-name');\r\n            document.getElementById('edit-price').value = btn.getAttribute('data-price');\r\n            document.getElementById('edit-desc').value = btn.getAttribute('data-desc');\r\n        });\r\n    });\r\n\r\n    // Pré-remplir modal édition catégorie\r\n    document.querySelectorAll('.edit-category-btn').forEach(btn=>{\r\n        btn.addEventListener('click', ()=>{\r\n            document.getElementById('edit-cat-name').value = btn.getAttribute('data-name');\r\n            document.getElementById('edit-cat-desc').value = btn.getAttribute('data-desc');\r\n            document.getElementById('edit-cat-originalName').value = btn.getAttribute('data-name');\r\n        });\r\n    });\r\n</script>\r\n</body>\r\n</html>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/categories.jsp b/src/main/webapp/categories.jsp
+--- a/src/main/webapp/categories.jsp	(revision 79d1f1bcf78529e5ac226f9759a79e3801b65519)
++++ b/src/main/webapp/categories.jsp	(date 1765355671494)
+@@ -3,211 +3,649 @@
+ <%@ page import="org.example.model.Category" %>
+ <%@ page import="org.example.model.Product" %>
+ <!DOCTYPE html>
+-<html>
++<html lang="fr">
+ <head>
+     <meta charset="UTF-8">
+-    <title>Catégories et Produits</title>
+-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
++    <title>Admin E-commerce Sport • Gestion Catalogue</title>
++    <meta name="viewport" content="width=device-width, initial-scale=1">
++
++    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
++    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
++    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
++
+     <style>
+-        body { background: #f8f9fa; color: #343a40; }
+-        .card-category { transition: transform .15s ease, box-shadow .15s ease; }
+-        .card-category:hover { transform: translateY(-6px); box-shadow: 0 10px 24px rgba(0,0,0,0.08); }
+-        .product-badge { font-size: 0.85rem; }
+-        .product-actions .btn { padding: .25rem .5rem; font-size: .85rem; }
++        :root {
++            --primary: #ff3b30;        /* rouge vif */
++            --primary-dark: #c72e24;   /* rouge foncé */
++            --accent: #ff9f1c;         /* orange vif pour badges et accents */
++            --accent-dark: #e07b1b;
++            --success: #2ecc71;        /* vert pour ajout/succès */
++            --dark: #121212;            /* fond général */
++            --gray: #1f1f1f;           /* fond cartes */
++            --light: #f5f5f5;          /* texte clair secondaire */
++            --text: #ffffff;            /* texte principal */
++            --text-muted: #aaa;         /* texte secondaire */
++        }
++
++        body {
++            background: var(--dark);
++            color: var(--text);
++            font-family: 'Montserrat', sans-serif;
++            min-height: 100vh;
++        }
++
++
++
++        /* Catégorie bannière */
++        .category-block {
++            position: relative;
++            border-radius: 24px;
++            overflow: hidden;
++            margin-bottom: 60px;
++            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
++            transition: all 0.4s ease;
++        }
++        .category-block:hover {
++            transform: translateY(-8px);
++            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
++        }
++
++        .category-banner {
++            height: 280px;
++            background-size: cover;
++            background-position: center;
++            display: flex;
++            align-items: center;
++            justify-content: center;
++            text-align: center;
++            background-blend-mode: overlay;
++        }
++
++        .category-title {
++            font-family: 'Orbitron', sans-serif;
++            font-size: 4rem;
++            font-weight: 900;
++            color: #fff;
++            text-shadow: 0 8px 20px rgba(0,0,0,0.7);
++            letter-spacing: 3px;
++        }
++
++        .category-desc {
++            background: rgba(0,0,0,0.6);
++            padding: 12px 28px;
++            border-radius: 50px;
++            backdrop-filter: blur(8px);
++            font-size: 1.2rem;
++            margin-top: 12px;
++            color: var(--light);
++        }
++
++        /* Grille produits */
++        .product-grid {
++            display: grid;
++            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
++            gap: 25px;
++            padding: 35px;
++            background: rgba(255,255,255,0.02);
++            border-radius: 0 0 24px 24px;
++        }
++
++        .product-card {
++            background: var(--gray);
++            border-radius: 20px;
++            overflow: hidden;
++            position: relative;
++            border: 1px solid rgba(255,59,48,0.2);
++            transition: all 0.4s ease;
++        }
++
++        .product-card:hover {
++            transform: translateY(-12px);
++            box-shadow: 0 20px 50px rgba(255,59,48,0.3);
++            border-color: var(--primary);
++        }
++
++        .product-image {
++            height: 240px;
++            background: #333;
++            background-size: cover;
++            background-position: center;
++            position: relative;
++        }
++
++        .product-image::after {
++            content: '';
++            position: absolute;
++            bottom: 0;
++            left: 0;
++            right: 0;
++            height: 70%;
++            background: linear-gradient(transparent, var(--gray));
++        }
++
++        .product-info {
++            padding: 18px 20px;
++        }
++
++        .product-name {
++            font-size: 1.4rem;
++            font-weight: 700;
++            margin-bottom: 6px;
++            color: var(--text);
++        }
++
++        .product-desc {
++            font-size: 0.9rem;
++            color: var(--text-muted);
++            margin-bottom: 12px;
++            display: -webkit-box;
++            -webkit-line-clamp: 2;
++            -webkit-box-orient: vertical;
++            overflow: hidden;
++        }
++
++        .product-price {
++            font-size: 1.8rem;
++            font-weight: 900;
++            color: var(--accent);
++            font-family: 'Bebas Neue', sans-serif;
++        }
++
++        .admin-actions {
++            position: absolute;
++            top: 12px;
++            right: 12px;
++            display: flex;
++            gap: 8px;
++            opacity: 0;
++            transition: all 0.3s;
++            z-index: 10;
++        }
++
++        .product-card:hover .admin-actions {
++            opacity: 1;
++        }
++
++        .admin-btn {
++            width: 40px;
++            height: 40px;
++            border-radius: 50%;
++            background: rgba(0,0,0,0.7);
++            border: none;
++            color: var(--text);
++            font-size: 1.1rem;
++            backdrop-filter: blur(8px);
++            transition: all 0.3s;
++        }
++
++        .admin-btn:hover {
++            background: var(--accent-dark);
++            transform: scale(1.15);
++        }
++
++        .btn-add-product-floating {
++            background: var(--success);
++            color: var(--text);
++            border-radius: 50px;
++            font-weight: 700;
++            padding: 10px 18px;
++            box-shadow: 0 8px 25px rgba(46,204,113,0.4);
++        }
++
++        .btn-add-product-floating:hover {
++            background: #27ae60;
++        }
++
++        .fab-main {
++            position: fixed;
++            bottom: 30px;
++            right: 30px;
++            width: 70px;
++            height: 70px;
++            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
++            border: none;
++            border-radius: 50%;
++            font-size: 2rem;
++            color: white;
++            box-shadow: 0 15px 40px rgba(255,59,48,0.6);
++            z-index: 1000;
++            transition: all 0.3s;
++        }
++
++        .fab-main:hover {
++            transform: scale(1.2) rotate(90deg);
++            background: linear-gradient(135deg, var(--accent), var(--primary-dark));
++        }
++
++        .empty-category {
++            grid-column: 1 / -1;
++            text-align: center;
++            padding: 60px 20px;
++            border: 2px dashed var(--primary);
++            border-radius: 20px;
++            background: rgba(255,59,48,0.05);
++        }
++         /* Modal édition produit  */
++         #editProductModal .form-control,
++         #editProductModal .form-control:focus {
++             background-color: #f8f9fa;
++             border: 2px solid transparent;
++             transition: all 0.3s ease;
++         }
++
++         #editProductModal .form-control:focus {
++             border-color: #ff3b30;
++             box-shadow: 0 0 0 0.25rem rgba(255, 59, 48, 0.15);
++             background-color: white;
++         }
++
++         #editProductModal .form-control::placeholder {
++             color: #999;
++             font-style: italic;
++         }
++
++         /* Boutons arrondis et modernes */
++         #editProductModal .btn {
++             font-weight: 600;
++             letter-spacing: 0.5px;
++             transition: all 0.3s ease;
++         }
++
++         #editProductModal .btn:hover {
++             transform: translateY(-2px);
++         }
++
+     </style>
+ </head>
+ <body>
++
+ <jsp:include page="shared/navbar/navbar.jsp" />
+ 
+-<div class="container my-5">
+-    <h1 class="mb-4 text-center">Gestion des Catégories et Produits</h1>
++<div class="container-fluid px-4">
++
++    <h1 class="page-title"></i>SPORTS CATALOG</h1>
++    <p class="page-subtitle">Manage your complete e-commerce product catalog</p>
+ 
+-    <div class="text-end mb-3">
+-        <!-- Bouton Ajouter catégorie -->
+-        <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+-            + Ajouter catégorie
+-        </button>
+-    </div>
++
++    <button class="fab-main shadow-lg" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
++        <i class="fas fa-plus"></i>
++    </button>
+ 
+-<%
+-    List<Category> categories = (List<Category>) request.getAttribute("categories");
+-    String cp = request.getContextPath();
+-    if (categories != null && !categories.isEmpty()) {
+-%>
+-    <div class="row g-4">
+-        <% for (Category cat : categories) { %>
+-        <div class="col-12 col-md-6 col-lg-4">
+-            <div class="card category-card h-100 shadow-sm">
+-                <div class="card-body d-flex flex-column">
+-                    <div class="d-flex justify-content-between align-items-start">
+-                        <div>
+-                            <h4 class="card-title text-primary"><%= cat.getName() %></h4>
+-                            <p class="card-text text-muted"><%= cat.getDescription() != null ? cat.getDescription() : "(Pas de description)" %></p>
+-                        </div>
+-                        <div class="text-end">
+-                            <!-- Actions catégorie -->
+-                            <button class="btn btn-outline-primary btn-sm edit-category-btn"
+-                                    data-bs-toggle="modal" data-bs-target="#editCategoryModal"
+-                                    data-name="<%= cat.getName() %>"
+-                                    data-desc="<%= cat.getDescription() != null ? cat.getDescription().replace("\"","'") : "" %>">
+-                                Modifier
+-                            </button>
+-
+-                            <form class="d-inline" method="post" action="<%= cp %>/categories" onsubmit="return confirm('Confirmez-vous la suppression de cette catégorie ?');">
+-                                <input type="hidden" name="action" value="delete"/>
+-                                <input type="hidden" name="name" value="<%= cat.getName() %>"/>
+-                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+-                            </form>
++    <%
++        List<Category> categories = (List<Category>) request.getAttribute("categories");
++        String cp = request.getContextPath();
++
++        if (categories != null && !categories.isEmpty()) {
++            for (Category cat : categories) {
++                String bannerImg = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&q=80";
++                if (cat.getName().toLowerCase().contains("cardio")) bannerImg = "https://images.unsplash.com/photo-1517836357463-d25dfeac68b8?ixlib=rb-4.0.3&auto=format&fit=crop&q=80";
++                else if (cat.getName().toLowerCase().contains("musculation")) bannerImg = "https://images.unsplash.com/photo-1581129724900-9d0e2b0252d3?ixlib=rb-4.0.3&auto=format&fit=crop&q=80";
++                else if (cat.getName().toLowerCase().contains("yoga")) bannerImg = "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&q=80";
++    %>
++
++    <div class="category-block">
++        <div class="category-banner" style="background-image: url('<%= bannerImg %>');">
++        <button class="admin-btn edit-category-btn"
++                data-bs-toggle="modal" data-bs-target="#editCategoryModal"
++                data-id="<%= cat.getId() %>"
++                data-name="<%= cat.getName() %>"
++                data-desc="<%= cat.getDescription() != null ? cat.getDescription().replace("\"","\\\"") : "" %>">
++            <i class="fas fa-edit"></i>
++        </button>
++          <form method="post" action="<%= cp %>/categories" style="display:inline;">
++              <input type="hidden" name="action" value="delete"/>
++              <input type="hidden" name="id" value="<%= cat.getId() %>"/>
++
++              <button type="submit" class="admin-btn bg-danger"
++                      onclick="return confirm('Delete this category ?');">
++                  <i class="fas fa-trash"></i>
++              </button>
++          </form>
+ 
+-                            <!-- Ajouter produit -->
+-                            <button class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#addProductModal"
+-                                    data-category="<%= cat.getName() %>">
+-                                + Add product
+-                            </button>
+-
+-                            <div class="badge bg-info text-dark product-badge mt-1"><%= cat.getProducts() != null ? cat.getProducts().size() : 0 %> produits</div>
+-                        </div>
+-                    </div>
++        <div>
++            <h2 class="category-title"><%= cat.getName().toUpperCase() %></h2>
++            <div class="category-desc">
++                <%= cat.getDescription() != null ? cat.getDescription() : "Matériel sportif & accessoires" %>
++            </div>
++        </div>
++        </div>
++          <button class="btn btn-add-product-floating mt-3"
++                data-bs-toggle="modal" data-bs-target="#addProductModal"
++                data-category="<%= cat.getId() %>">
++            <i class="fas fa-plus "></i>
++        </button>
+ 
+-                    <h6 class="mt-3">Produits :</h6>
+-                    <ul class="list-group list-group-flush">
+-                        <%
+-                            List<Product> products = cat.getProducts();
+-                            if (products != null && !products.isEmpty()) {
+-                                for (Product product : products) {
+-                        %>
+-                        <li class="list-group-item d-flex justify-content-between align-items-center">
+-                            <div style="max-width:55%;"><strong><%= product.getName() %></strong><br/>
+-                                <small class="text-muted"><%= product.getDescription() != null ? product.getDescription() : "" %></small>
+-                            </div>
+-                            <div class="d-flex align-items-center gap-2">
+-                                <span class="badge bg-secondary product-badge"><%= product.getPrice() %> €</span>
+-                                <div class="product-actions">
+-                                    <!-- Modifier produit -->
+-                                    <button class="btn btn-outline-primary btn-sm edit-product-btn"
+-                                            data-bs-toggle="modal" data-bs-target="#editProductModal"
+-                                            data-category="<%= cat.getName() %>"
+-                                            data-name="<%= product.getName().replace("\"","'") %>"
+-                                            data-price="<%= product.getPrice() %>"
+-                                            data-desc="<%= product.getDescription() != null ? product.getDescription().replace("\"","'") : "" %>">
+-                                        Modify
+-                                    </button>
+-                                    <!-- Supprimer produit -->
+-                                    <form class="d-inline" method="post" action="<%= cp %>/products" onsubmit="return confirm('Confirmez-vous la suppression de ce produit ?');">
+-                                        <input type="hidden" name="action" value="delete"/>
+-                                        <input type="hidden" name="category" value="<%= cat.getName() %>"/>
+-                                        <input type="hidden" name="productName" value="<%= product.getName() %>"/>
+-                                        <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+-                                    </form>
+-                                </div>
+-                            </div>
+-                        </li>
+-                        <%      }
+-                            } else { %>
+-                        <li class="list-group-item text-center text-muted">Aucun produit pour cette catégorie.</li>
+-                        <% } %>
+-                    </ul>
++        <div class="product-grid">
++
++            <%
++                List<Product> products = cat.getProducts();
++                if (products != null && !products.isEmpty()) {
++                    for (Product p : products) {
++                        String prodImg = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&q=80";
++            %>
++
++            <div class="product-card">
++                <div class="product-image" style="background-image: url('<%= prodImg %>')">
++                    <div class="admin-actions">
++                        <button class="admin-btn edit-product-btn"
++                                data-bs-toggle="modal" data-bs-target="#editProductModal"
++                                data-id="<%= p.getId() %>"
++                                data-category="<%= cat.getName() %>"
++                                data-name="<%= p.getName() %>"
++                                data-price="<%= p.getPrice() %>"
++                                data-desc="<%= p.getDescription() != null ? p.getDescription().replace("\"","\\\"") : "" %>">
++                            <i class="fas fa-edit"></i>
++                        </button>
++                        <form method="post" action="<%= cp %>/products" style="display:inline">
++                            <input type="hidden" name="action" value="delete"/>
++                            <input type="hidden" name="category" value="<%= cat.getName() %>"/>
++                            <input type="hidden" name="productName" value="<%= p.getName() %>"/>
++                            <button type="submit" class="admin-btn bg-danger"
++                                    onclick="return confirm('delete this product ?')">
++                                <i class="fas fa-trash"></i>
++                            </button>
++                        </form>
++                    </div>
++                </div>
++                <div class="product-info">
++                    <h3 class="product-name"><%= p.getName() %></h3>
++                    <p class="product-desc"><%= p.getDescription() != null ? p.getDescription() : "Produit haut de gamme" %></p>
++                    <div class="product-price"><%= String.format("%.2f", p.getPrice()) %> €</div>
+                 </div>
++
+             </div>
+-        </div>
+-        <% } %>
++
++            <% } } else { %>
++                <div class="empty-category">
++                    <i class="fas fa-box-open"></i>
++                    <p class="text-muted mb-5" style="font-size: 1rem;">
++                        Soyez le premier à ajouter un article dans <strong><%= cat.getName() %></strong>
++                    </p>
++                     <button class="btn btn-add-product-floating mt-3"
++                            data-bs-toggle="modal" data-bs-target="#addProductModal"
++                            data-category="<%= cat.getName() %>">
++                        <i class="fas fa-plus "></i>
++                    </button>
++                </div>
++            <% } %>
++
++        </div>
++    </div>
++
++    <% } } else { %>
++
++    <div class="text-center py-5 my-5">
++        <i class="fas fa-dumbbell display-1 mb-4" style="color: var(--primary); opacity: 0.3;"></i>
++        <h2 class="text-white">Votre catalogue est vide</h2>
++        <p class="lead text-muted mb-5">Commencez par créer votre première catégorie sportive !</p>
++        <button class="btn btn-lg px-5" style="background: var(--primary); color: white; font-size: 1.4rem;"
++                data-bs-toggle="modal" data-bs-target="#addCategoryModal">
++            <i class="fas fa-plus me-3"></i> Créer la première catégorie
++        </button>
+     </div>
+-<% } else { %>
+-    <div class="alert alert-info text-center">Aucune catégorie trouvée.</div>
+-<% } %>
++
++    <% } %>
++
+ </div>
+ 
+-<!-- Modals Catégorie -->
+-<div class="modal fade" id="addCategoryModal">
+-  <div class="modal-dialog">
+-    <form class="modal-content" method="post" action="<%= cp %>/categories">
+-        <input type="hidden" name="action" value="add"/>
+-      <div class="modal-header"><h5 class="modal-title">Add category</h5>
+-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+-      <div class="modal-body">
+-          <div class="mb-3"><label>Name</label><input required name="name" class="form-control"/></div>
+-          <div class="mb-3"><label>Description</label><textarea name="description" class="form-control"></textarea></div>
+-      </div>
+-      <div class="modal-footer"><button type="submit" class="btn btn-success">Add</button></div>
+-    </form>
+-  </div>
++<!---------------------------------------------------- CRUD Category --------------------------------------------------->
++
++<!-- Modal Add Category -->
++<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
++    <div class="modal-dialog modal-dialog-centered modal-lg">
++        <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/categories">
++            <input type="hidden" name="action" value="add"/>
++
++            <!-- En-tête stylé -->
++            <div class="modal-header bg-gradient text-grey border-0 py-4"
++                 style="background: linear-gradient(135deg, #ff3b30, #ff6b6b);">
++                <h5 class="modal-title fs-3 fw-bold" id="addCategoryModalLabel">
++                    <i class="fas fa-trophy me-3"></i> Create New Category
++                </h5>
++                <button type="button" class="btn-close btn-close-grey" data-bs-dismiss="modal" aria-label="Close"></button>
++            </div>
++
++            <!-- Corps du modal – fond blanc -->
++            <div class="modal-body bg-white p-5">
++                <div class="row g-4">
++
++                    <div class="col-12">
++                        <label class="form-label fw-bold text-dark fs-5">
++                            <i class="fas fa-layer-group text-danger me-2"></i> Category Name
++                        </label>
++                        <input required name="name"
++                               class="form-control form-control-lg rounded-pill shadow-sm border-0"
++                               maxlength="50"/>
++                    </div>
++
++                    <div class="col-12">
++                        <label class="form-label fw-bold text-dark fs-5">
++                            <i class="fas fa-align-left text-primary me-2"></i> Description
++                        </label>
++                        <textarea required name="description" rows="4" class="form-control rounded-3 shadow-sm border-0" ></textarea>
++
++                    </div>
++
++                </div>
++            </div>
++
++            <!-- Pied de page -->
++            <div class="modal-footer bg-light border-0 py-4 px-5 justify-content-between">
++                <button type="button" class="btn btn-outline-secondary btn-lg px-5 rounded-pill" data-bs-dismiss="modal">
++                    Cancel
++                </button>
++                <button type="submit" class="btn btn-danger btn-lg px-5 rounded-pill shadow">
++                    <i class="fas fa-plus me-2"></i> Create Category
++                </button>
++            </div>
++        </form>
++    </div>
+ </div>
+ 
+-<div class="modal fade" id="editCategoryModal">
+-  <div class="modal-dialog">
+-    <form class="modal-content" method="post" action="<%= cp %>/categories">
+-        <input type="hidden" name="action" value="edit"/>
+-        <input type="hidden" name="originalName" id="edit-cat-originalName"/>
+-      <div class="modal-body">
+-          <div class="mb-3"><label>Nom</label><input required name="name" id="edit-cat-name" class="form-control"/></div>
+-          <div class="mb-3"><label>Description</label><textarea name="description" id="edit-cat-desc" class="form-control"></textarea></div>
+-      </div>
+-      <div class="modal-footer"><button type="submit" class="btn btn-primary">Save</button></div>
+-    </form>
+-  </div>
++<!-- Modal Edit Category -->
++<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
++    <div class="modal-dialog modal-dialog-centered modal-lg">
++        <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/categories">
++            <input type="hidden" name="action" value="edit"/>
++            <input type="hidden" name="id" id="edit-category-id"/>
++             <input type="hidden" name="category" id="edit-category"/>
++             <input type="hidden" name="originalName" id="edit-originalName"/>
++            <div class="modal-header bg-gradient text-grey border-0 py-4" style="background: linear-gradient(135deg, #ff3b30, #ff6b6b);">
++                <h5 class="modal-title fs-3 fw-bold" id="editCategoryModalLabel">
++                    <i class="fas fa-edit me-3"></i> Edit Category
++                </h5>
++                <button type="button" class="btn-close btn-close-grey" data-bs-dismiss="modal" aria-label="Close"></button>
++            </div>
++
++            <div class="modal-body bg-white p-5">
++                <div class="row g-4">
++                    <div class="col-12">
++                        <label class="form-label fw-bold text-dark fs-5">
++                            <i class="fas fa-layer-group text-danger me-2"></i> Category Name
++                        </label>
++                        <input required name="name" id="edit-category-name" class="form-control form-control-lg rounded-pill shadow-sm border-0" maxlength="50"/>
++                    </div>
++
++                    <div class="col-12">
++                        <label class="form-label fw-bold text-dark fs-5">
++                            <i class="fas fa-align-left text-primary me-2"></i> Description
++                        </label>
++                         <textarea required name="description" id="edit-category-desc" rows="4" class="form-control rounded-3 shadow-sm border-0"></textarea>
++
++                    </div>
++                </div>
++            </div>
++
++            <div class="modal-footer bg-light border-0 py-4 px-5 justify-content-between">
++                <button type="button" class="btn btn-outline-secondary btn-lg px-5 rounded-pill" data-bs-dismiss="modal">
++                    Cancel
++                </button>
++                <button type="submit" class="btn btn-danger btn-lg px-3 rounded-pill shadow">
++                    <i class="fas fa-save me-2"></i> Save
++                </button>
++            </div>
++        </form>
++    </div>
+ </div>
+ 
+-<!-- Modals Produit -->
+-<div class="modal fade" id="addProductModal">
+-  <div class="modal-dialog">
+-    <form class="modal-content" method="post" action="<%= cp %>/products">
+-        <input type="hidden" name="action" value="add"/>
+-        <input type="hidden" name="category" id="add-category"/>
+-      <div class="modal-header"><h5 class="modal-title">Add product to</h5>
+-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+-      <div class="modal-body">
+-          <div class="mb-3"><label>Name</label><input required name="name" class="form-control"/></div>
+-          <div class="mb-3"><label>Price(€)</label><input required name="price" type="number" step="0.01" class="form-control"/></div>
+-          <div class="mb-3"><label>Description</label><textarea required name="description" class="form-control"></textarea></div>
+-      </div>
+-      <div class="modal-footer"><button type="submit" class="btn btn-success">Add</button></div>
+-    </form>
+-  </div>
++<!---------------------------------------------------- CRUD Product --------------------------------------------------->
++
++<!-- Modal Add Product -->
++<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
++    <div class="modal-dialog modal-dialog-centered modal-lg">
++        <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/products">
++            <input type="hidden" name="action" value="add"/>
++            <input type="hidden" name="category" id="add-category"/>
++
++            <div class="modal-header bg-gradient text-grey border-0 py-4" style="background: linear-gradient(135deg, #ff3b30, #ff6b6b);">
++                <h5 class="modal-title fs-3 fw-bold" id="addProductModalLabel">
++                    <i class="fas fa-plus me-3"></i> Add New Product
++                </h5>
++                <button type="button" class="btn-close btn-close-grey" data-bs-dismiss="modal" aria-label="Close"></button>
++            </div>
++
++            <div class="modal-body bg-white p-5">
++                <div class="row g-4">
++                    <div class="col-md-12">
++                        <label class="form-label fw-bold text-dark fs-5">
++                            <i class="fas fa-tag text-danger me-2"></i> Product Name
++                        </label>
++                        <input required name="name" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
++                    </div>
++
++                    <div class="col-md-6">
++                        <label class="form-label fw-bold text-dark fs-5">
++                            <i class="fas fa-euro-sign text-success me-2"></i> Price
++                        </label>
++                        <input required name="price" type="number" step="0.01" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
++                    </div>
++
++                    <div class="col-md-6">
++                        <label class="form-label fw-bold text-dark fs-5">
++                            <i class="fas fa-align-left text-primary me-2"></i> Description
++                        </label>
++                        <textarea name="description" rows="3" class="form-control rounded-3 shadow-sm border-0"></textarea>
++                    </div>
++                </div>
++            </div>
++
++            <div class="modal-footer bg-light border-0 py-4 px-5 justify-content-between">
++                <button type="button" class="btn btn-outline-secondary btn-lg px-5 rounded-pill" data-bs-dismiss="modal">
++                    Cancel
++                </button>
++                <button type="submit" class="btn btn-success btn-lg px-3 rounded-pill shadow">
++                    <i class="fas fa-plus me-2"></i> Add Product
++                </button>
++            </div>
++        </form>
++    </div>
+ </div>
+ 
+-<div class="modal fade" id="editProductModal">
+-  <div class="modal-dialog">
+-    <form class="modal-content" method="post" action="<%= cp %>/products">
+-        <input type="hidden" name="action" value="edit"/>
+-        <input type="hidden" name="category" id="edit-category"/>
+-        <input type="hidden" name="originalName" id="edit-originalName"/>
+-      <div class="modal-body">
+-          <div class="mb-3"><label>Nom</label><input required name="name" id="edit-name" class="form-control"/></div>
+-          <div class="mb-3"><label>Prix (€)</label><input required name="price" id="edit-price" type="number" step="0.01" class="form-control"/></div>
+-          <div class="mb-3"><label>Description</label><input required name="description" id="edit-desc" class="form-control"/></div>
+-      </div>
+-      <div class="modal-footer"><button type="submit" class="btn btn-primary">Save</button></div>
+-    </form>
+-  </div>
++
++<!-- Modal Edit Product  -->
++<div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
++    <div class="modal-dialog modal-dialog-centered modal-lg">
++        <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/products">
++            <input type="hidden" name="action" value="edit"/>
++            <input type="hidden" name="category" id="edit-category"/>
++            <input type="hidden" name="originalName" id="edit-originalName"/>
++            <input type="hidden" name="id" id="edit-id"/>
++
++            <!-- En-tête stylé -->
++            <div class="modal-header bg-gradient text-grey border-0 py-4" style="background: linear-gradient(135deg, #ff3b30, #ff6b6b);">
++                <h5 class="modal-title fs-3 fw-bold" id="editProductModalLabel">
++                    <i class="fas fa-edit me-3"></i> Modify Product
++                </h5>
++                <button type="button" class="btn-close btn-close-grey" data-bs-dismiss="modal" aria-label="Close"></button>
++            </div>
++
++            <!-- Corps du modal – fond blanc propre -->
++            <div class="modal-body bg-white p-5">
++                <div class="row g-4">
++
++                    <div class="col-md-12">
++                        <label class="form-label fw-bold text-dark fs-5">
++                            <i class="fas fa-tag text-danger me-2"></i>Product Name
++                        </label>
++                        <input required name="name" id="edit-name" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
++                    </div>
++
++                    <div class="col-md-6">
++                        <label class="form-label fw-bold text-dark fs-5">
++                            <i class="fas fa-euro-sign text-success me-2"></i> Price
++                        </label>
++                        <input required name="price" id="edit-price" type="number" step="0.01"
++                               class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
++
++                    </div>
++
++                    <div class="col-md-6">
++                        <label class="form-label fw-bold text-dark fs-5">
++                            <i class="fas fa-align-left text-primary me-2"></i> Description
++                        </label>
++                        <textarea name="description" id="edit-desc" rows="3" class="form-control rounded-3 shadow-sm border-0"> </textarea>
++
++                    </div>
++
++                </div>
++            </div>
++
++            <!-- Pied de page -->
++            <div class="modal-footer bg-light border-0 py-4 px-5 justify-content-between">
++                <button type="button" class="btn btn-outline-secondary btn-lg px-5 rounded-pill" data-bs-dismiss="modal">
++                    Cancel
++                </button>
++                <button type="submit" class="btn btn-danger btn-lg px-3 rounded-pill shadow">
++                    <i class="fas fa-save me-2"></i> Save
++                </button>
++            </div>
++        </form>
++    </div>
+ </div>
+ 
+-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
++<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
++
+ <script>
+-    // Pré-remplir modal ajout produit
+-    document.addEventListener('click', function(e){
+-        const addBtn = e.target.closest('[data-bs-target="#addProductModal"]');
+-        if (addBtn) document.getElementById('add-category').value = addBtn.getAttribute('data-category') || '';
++    //modal ajout categories
++  document.querySelectorAll('[data-bs-target="#addProductModal"]').forEach(btn => {
++        btn.addEventListener('click', () => {
++            document.getElementById('add-category')?.setAttribute('value', btn.dataset.category);
++        });
++    });
++    // Open edit category modal
++    document.querySelectorAll('.edit-category-btn').forEach(btn => {
++        btn.addEventListener('click', () => {
++            document.getElementById('edit-category-id').value = btn.dataset.id;
++            document.getElementById('edit-category-name').value = btn.dataset.name;
++            document.getElementById('edit-category-desc').value = btn.dataset.desc;
++        });
++    });
++
++    // Open delete category modal
++    document.querySelectorAll('.delete-category-btn').forEach(btn => {
++        btn.addEventListener('click', () => {
++            document.getElementById('delete-category-id').value = btn.dataset.id;
++            document.getElementById('delete-category-name').innerText = btn.dataset.name;
++        });
+     });
+ 
+     // Pré-remplir modal édition produit
+-    document.querySelectorAll('.edit-product-btn').forEach(btn=>{
+-        btn.addEventListener('click', ()=>{
+-            document.getElementById('edit-category').value = btn.getAttribute('data-category');
+-            document.getElementById('edit-originalName').value = btn.getAttribute('data-name');
+-            document.getElementById('edit-name').value = btn.getAttribute('data-name');
+-            document.getElementById('edit-price').value = btn.getAttribute('data-price');
+-            document.getElementById('edit-desc').value = btn.getAttribute('data-desc');
+-        });
+-    });
++   document.querySelectorAll('.edit-product-btn').forEach(btn => {
++       btn.addEventListener('click', () => {
++           document.getElementById('edit-id').value = btn.dataset.id;
++           document.getElementById('edit-category').value = btn.dataset.category;
++           document.getElementById('edit-originalName').value = btn.dataset.name;
++           document.getElementById('edit-name').value = btn.dataset.name;
++           document.getElementById('edit-price').value = btn.dataset.price;
++           document.getElementById('edit-desc').value = btn.dataset.desc;
++       });
++   });
+ 
+-    // Pré-remplir modal édition catégorie
+-    document.querySelectorAll('.edit-category-btn').forEach(btn=>{
+-        btn.addEventListener('click', ()=>{
+-            document.getElementById('edit-cat-name').value = btn.getAttribute('data-name');
+-            document.getElementById('edit-cat-desc').value = btn.getAttribute('data-desc');
+-            document.getElementById('edit-cat-originalName').value = btn.getAttribute('data-name');
+-        });
+-    });
+ </script>
++
++
++
++
++
+ </body>
+ </html>
+Index: src/main/webapp/home.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><%@ page import=\"java.util.List\" %>\r\n<%@ page import=\"org.example.model.Promotion\" %>\r\n<%@ page import=\"org.example.service.PromotionService\" %>\r\n\r\n<html>\r\n<head>\r\n    <title>IIT/GR3</title>\r\n</head>\r\n\r\n<style>\r\n.promotions-banner {\r\n    background: #ffdfdf;\r\n    padding: 20px;\r\n    margin-bottom: 20px;\r\n    border-radius: 10px;\r\n}\r\n\r\n.promo-card {\r\n    padding: 10px;\r\n    margin-bottom: 10px;\r\n    background: #fff3f3;\r\n    border-left: 5px solid red;\r\n}\r\n</style>\r\n\r\n<body>\r\n\r\n<jsp:include page=\"shared/navbar/navbar.jsp\" />\r\n\r\n<%\r\n    PromotionService promoService = new PromotionService();\r\n    List<Promotion> activePromos = promoService.getActivePromotions();\r\n%>\r\n\r\n<div class=\"promotions-banner\">\r\n    <% for (Promotion ap : activePromos) { %>\r\n        <div class=\"promo-card\">\r\n            <h2><%= ap.getTitle() %></h2>\r\n            <p><%= ap.getDescription() %></p>\r\n        </div>\r\n    <% } %>\r\n</div>\r\n</body>\r\n</html>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/home.jsp b/src/main/webapp/home.jsp
+--- a/src/main/webapp/home.jsp	(revision 79d1f1bcf78529e5ac226f9759a79e3801b65519)
++++ b/src/main/webapp/home.jsp	(date 1765273636803)
+@@ -1,44 +1,370 @@
++<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+ <%@ page import="java.util.List" %>
++<%@ page import="org.example.model.Category" %>
++<%@ page import="org.example.model.Product" %>
+ <%@ page import="org.example.model.Promotion" %>
+ <%@ page import="org.example.service.PromotionService" %>
+ 
+-<html>
++<%
++    List<Category> categories = (List<Category>) request.getAttribute("categories");
++    if (categories == null) categories = new java.util.ArrayList<>();
++
++    String selectedCategoryId = request.getParameter("categoryId");
++    List<Product> displayProducts = new java.util.ArrayList<>();
++
++    if (selectedCategoryId != null && !selectedCategoryId.isEmpty()) {
++        for (Category cat : categories) {
++            if (String.valueOf(cat.getId()).equals(selectedCategoryId)) {
++                displayProducts = cat.getProducts();
++                break;
++            }
++        }
++    } else {
++        // Default: show promo products
++        for (Category cat : categories) {
++            if (cat.getProducts() != null) {
++                for (Product p : cat.getProducts()) {
++                    if (p.isPromo()) displayProducts.add(p);
++                }
++            }
++        }
++    }
++
++    PromotionService promoService = new PromotionService();
++    List<Promotion> promos = promoService.getActivePromotions();
++%>
++
++<!DOCTYPE html>
++<html lang="en">
+ <head>
+-    <title>IIT/GR3</title>
+-</head>
++    <meta charset="UTF-8">
++    <meta name="viewport" content="width=device-width, initial-scale=1.0">
++    <title>Sport & Wellness - Premium Fitness Gear</title>
++    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
++    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
++    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+ 
+-<style>
+-.promotions-banner {
+-    background: #ffdfdf;
+-    padding: 20px;
+-    margin-bottom: 20px;
+-    border-radius: 10px;
+-}
++    <style>
++        :root {
++            --primary: #ff1a44;
++            --primary-dark: #e6002d;
++            --text: #1a1a1a;
++            --text-light: #555;
++            --bg: #f8f9fc;
++        }
++
++        body {
++            font-family: 'Inter', sans-serif;
++            background: var(--bg);
++            color: var(--text);
++            line-height: 1.6;
++        }
++
++       /* Promotions Ticker Improved */
++       .promo-ticker {
++           background: var(--primary);
++           color: white;
++           padding: 12px 0;
++           overflow: hidden;
++           position: relative;
++           box-shadow: 0 4px 20px rgba(255, 26, 68, 0.25);
++       }
++
++       .ticker-wrapper {
++           white-space: nowrap;
++           overflow: hidden;
++           position: relative;
++       }
++
++       .ticker-content {
++           display: inline-flex;
++           align-items: center;
++           gap: 80px;
++           white-space: nowrap;
++           animation: ticker 25s linear infinite;
++           padding-left: 100%;
++       }
++
++       .ticker-content span {
++           font-size: 1.15rem;
++           font-weight: 500;
++       }
++
++       .ticker-content strong {
++           font-weight: 700;
++       }
++
++       /* Pause animation when hovered */
++       .promo-ticker:hover .ticker-content {
++           animation-play-state: paused;
++       }
++
++       @keyframes ticker {
++           0% { transform: translateX(0); }
++           100% { transform: translateX(-100%); }
++       }
++
++
++        /* Hero Section */
++        .hero {
++            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url('assets/img/test1.jpg') center/cover no-repeat;
++            height: 90vh;
++            min-height: 600px;
++            display: flex;
++            align-items: center;
++            color: white;
++        }
++
++        .hero h1 {
++            font-size: 4.5rem;
++            font-weight: 800;
++            line-height: 1.1;
++        }
++
++        .hero p {
++            font-size: 1.4rem;
++            max-width: 600px;
++            opacity: 0.95;
++        }
++
++        /* Sidebar */
++        .sidebar {
++            background: white;
++            border-radius: 16px;
++            padding: 2rem;
++            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
++            height: fit-content;
++            position: sticky;
++            top: 100px;
++        }
++
++        .sidebar a {
++            display: block;
++            padding: 12px 16px;
++            border-radius: 12px;
++            color: var(--text-light);
++            text-decoration: none;
++            font-weight: 500;
++            transition: all 0.3s ease;
++            margin-bottom: 6px;
++        }
++
++        .sidebar a:hover, .sidebar a.active {
++            background: var(--primary);
++            color: white;
++            transform: translateX(8px);
++        }
++
++        .sidebar a.active {
++            font-weight: 600;
++        }
++
++        /* Product Card */
++        .product-card {
++            background: white;
++            border-radius: 20px;
++            overflow: hidden;
++            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
++            transition: all 0.4s ease;
++            height: 100%;
++            display: flex;
++            flex-direction: column;
++        }
++
++        .product-card:hover {
++            transform: translateY(-12px);
++            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
++        }
++
++        .product-img {
++            height: 220px;
++            object-fit: cover;
++            width: 100%;
++        }
+ 
+-.promo-card {
+-    padding: 10px;
+-    margin-bottom: 10px;
+-    background: #fff3f3;
+-    border-left: 5px solid red;
+-}
+-</style>
+-
++        .card-body {
++            padding: 1.5rem;
++            flex-grow: 1;
++            display: flex;
++            flex-direction: column;
++        }
++
++        .price-old {
++            text-decoration: line-through;
++            color: #999;
++            font-size: 0.95rem;
++        }
++
++        .price-new {
++            font-size: 1.5rem;
++            font-weight: 700;
++            color: var(--primary);
++        }
++
++        .badge-promo {
++            position: absolute;
++            top: 12px;
++            left: 12px;
++            background: var(--primary);
++            color: white;
++            padding: 6px 12px;
++            border-radius: 50px;
++            font-size: 0.85rem;
++            font-weight: 600;
++            z-index: 2;
++        }
++
++        .btn-add-cart {
++            background: var(--primary);
++            border: none;
++            border-radius: 12px;
++            padding: 12px;
++            font-weight: 600;
++            transition: 0.3s;
++        }
++
++        .btn-add-cart:hover {
++            background: var(--primary-dark);
++            transform: scale(1.05);
++        }
++
++        h2.section-title {
++            font-weight: 700;
++            font-size: 2.2rem;
++            color: var(--text);
++        }
++        .btn-add-cart {
++            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
++            border: none;
++            font-size: 1.05rem;
++            transition: all 0.3s ease;
++            text-transform: uppercase;
++            letter-spacing: 0.5px;
++        }
++
++        .btn-add-cart:hover {
++            background: linear-gradient(135deg, var(--primary-dark), #cc0022);
++            transform: translateY(-3px);
++            box-shadow: 0 10px 25px rgba(255, 26, 68, 0.3) !important;
++        }
++
++        @media (max-width: 768px) {
++            .hero h1 { font-size: 3rem; }
++            .hero p { font-size: 1.2rem; }
++            .sidebar { position: static; }
++        }
++    </style>
++</head>
+ <body>
+ 
+ <jsp:include page="shared/navbar/navbar.jsp" />
+ 
+-<%
+-    PromotionService promoService = new PromotionService();
+-    List<Promotion> activePromos = promoService.getActivePromotions();
+-%>
++<!-- PROMOTION TICKER -->
++<% if (promos != null && !promos.isEmpty()) { %>
++<div class="promo-ticker">
++    <div class="ticker-wrapper">
++        <div class="ticker-content">
++            <% for (Promotion p : promos) { %>
++                <span><strong><%= p.getTitle() %></strong> — <%= p.getDescription() %></span>
++            <% } %>
++
++            <% for (Promotion p : promos) { %>
++                <span><strong><%= p.getTitle() %></strong> — <%= p.getDescription() %></span>
++            <% } %>
++        </div>
++    </div>
++</div>
++<% } %>
++
++<!-- HERO SECTION -->
++<section class="hero">
++    <div class="container">
++        <div class="row>
++            <div class="col-lg-7">
++                <h1>Sport & Wellness</h1>
++                <p class="mt-3">Elevate your fitness journey with premium gear designed for performance, comfort, and style.</p>
++                <a href="home" class="btn btn-light btn-lg mt-4 px-5 py-3 fw-semibold">Shop Now</a>
++            </div>
++        </div>
++    </div>
++</section>
++
++<!-- MAIN CONTENT -->
++<div class="container py-5">
++    <div class="row">
++        <!-- SIDEBAR -->
++        <div class="col-md-3 mb-5">
++            <div class="sidebar">
++                <h5 class="fw-bold mb-4 text-dark">Categories</h5>
++                <a href="home" class="<%= (selectedCategoryId == null) ? "active" : "" %>">
++                    On Sale Now
++                </a>
++                <% for (Category cat : categories) { %>
++                    <a href="home?categoryId=<%= cat.getId() %>"
++                       class="<%= (selectedCategoryId != null && selectedCategoryId.equals(String.valueOf(cat.getId()))) ? "active" : "" %>">
++                        <%= cat.getName() %>
++                    </a>
++                <% } %>
++            </div>
++        </div>
+ 
+-<div class="promotions-banner">
+-    <% for (Promotion ap : activePromos) { %>
+-        <div class="promo-card">
+-            <h2><%= ap.getTitle() %></h2>
+-            <p><%= ap.getDescription() %></p>
+-        </div>
+-    <% } %>
++        <!-- PRODUCTS GRID -->
++        <div class="col-md-9">
++            <h2 class="section-title mb-5">
++                <%= (selectedCategoryId != null) ?
++                    "Category: " + categories.stream()
++                        .filter(c -> String.valueOf(c.getId()).equals(selectedCategoryId))
++                        .findFirst().get().getName()
++                    : "Hot Deals & Promotions" %>
++            </h2>
++
++            <% if (displayProducts.isEmpty()) { %>
++                <div class="text-center py-5">
++                    <p class="fs-3 text-muted">No products available in this category yet.</p>
++                </div>
++            <% } else { %>
++                <div class="row g-4">
++                    <% for (Product prod : displayProducts) { %>
++                        <div class="col-md-6 col-lg-4">
++                            <div class="product-card position-relative">
++                                <% if (prod.isPromo()) { %>
++                                    <span class="badge-promo">SALE</span>
++                                <% } %>
++                                <img src="https://via.placeholder.com/400x300/111827/ffffff?text=<%= prod.getName().replace(" ", "+") %>"
++                                     alt="<%= prod.getName() %>" class="product-img">
++
++                                <div class="card-body">
++                                    <h5 class="fw-bold"><%= prod.getName() %></h5>
++                                    <p class="text-muted small flex-grow-1"><%= prod.getDescription() %></p>
++                                    <p class="text-muted small">Stock: <%= prod.getQuantity() %></p>
++
++                                    <div class="mt-3">
++                                        <% if (prod.isPromo()) { %>
++                                            <p>
++                                                <span class="price-old">$<%= String.format("%.2f", prod.getPrice()) %></span>
++                                                <span class="price-new ms-3">$<%= String.format("%.2f", prod.getPromoPrice()) %></span>
++                                            </p>
++                                        <% } else { %>
++                                            <p class="price-new">$<%= String.format("%.2f", prod.getPrice()) %></p>
++                                        <% } %>
++                                    </div>
++
++                                    <form action="addToCart" method="post" class="mt-auto">
++                                        <input type="hidden" name="productId" value="<%= prod.getId() %>">
++                                        <button type="submit" class="btn btn-add-cart text-white w-100 mt-2">
++                                            Add to Cart
++                                        </button>
++                                    </form>
++                                </div>
++                            </div>
++                        </div>
++                    <% } %>
++                </div>
++            <% } %>
++        </div>
++    </div>
+ </div>
++
++<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+ </body>
+-</html>
++</html>
+\ No newline at end of file
+Index: src/main/java/org/example/repository/CategroyRepository.java
+===================================================================
+diff --git a/src/main/java/org/example/repository/CategroyRepository.java b/src/main/java/org/example/repository/CategroyRepository.java
+deleted file mode 100644
+--- a/src/main/java/org/example/repository/CategroyRepository.java	(revision 79d1f1bcf78529e5ac226f9759a79e3801b65519)
++++ /dev/null	(revision 79d1f1bcf78529e5ac226f9759a79e3801b65519)
+@@ -1,53 +0,0 @@
+-package org.example.repository;
+-
+-import org.example.model.Category;
+-import org.example.model.Product;
+-
+-import java.util.ArrayList;
+-import java.util.List;
+-
+-public class CategroyRepository {
+-
+-    private static List<Category> categories = new ArrayList<>(List.of(
+-            new Category(1,"Electronics", "Devices and gadgets", new ArrayList<>(List.of(
+-                    new Product(1,"Laptop", 999.99, "A high-performance laptop"),
+-                    new Product(2,"Smartphone", 699.99, "A latest model smartphone"),
+-                    new Product(3,"Headphones", 199.99, "Noise-cancelling headphones")
+-            ))),
+-            new Category(2,"Apparel", "Various clothes", new ArrayList<>(List.of(
+-                    new Product(4,"Shirts", 99.99, "A high-quality shirt"),
+-                    new Product(5,"Pants", 29.99, "A latest model Pants"),
+-                    new Product(6,"Dresses", 119.09, "Very stylish dresses")
+-            )))
+-    ));
+-
+-    public CategroyRepository() {
+-
+-    }
+-
+-    public List<Category> getAllCategories() {
+-        return categories;
+-    }
+-    // Ajouter une catégorie
+-    public void addCategory(Category category) {
+-        categories.add(category);
+-    }
+-
+-    // Supprimer une catégorie par nom
+-    public void deleteCategory(String name) {
+-        categories.removeIf(c -> c.getName().equalsIgnoreCase(name));
+-    }
+-
+-    // Modifier une catégorie par nom
+-    public void updateCategory(String originalName, Category updatedCategory) {
+-        for (Category c : categories) {
+-            if (c.getName().equalsIgnoreCase(originalName)) {
+-                c.setName(updatedCategory.getName());
+-                c.setDescription(updatedCategory.getDescription());
+-                return;
+-            }
+-        }
+-    }
+-
+-
+-}
+Index: src/main/java/org/example/controller/HomeController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.example.controller;\r\n\r\nimport jakarta.servlet.ServletException;\r\nimport jakarta.servlet.annotation.WebServlet;\r\nimport jakarta.servlet.http.HttpServlet;\r\nimport jakarta.servlet.http.HttpServletRequest;\r\nimport jakarta.servlet.http.HttpServletResponse;\r\n\r\nimport java.io.IOException;\r\n\r\n@WebServlet(name = \"HomeController\", urlPatterns = {\"/home\"})\r\npublic class HomeController extends HttpServlet {\r\n\r\n\r\n    @Override\r\n    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {\r\n            resp.sendRedirect(\"home.jsp\");\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/controller/HomeController.java b/src/main/java/org/example/controller/HomeController.java
+--- a/src/main/java/org/example/controller/HomeController.java	(revision 79d1f1bcf78529e5ac226f9759a79e3801b65519)
++++ b/src/main/java/org/example/controller/HomeController.java	(date 1764769862794)
+@@ -5,15 +5,31 @@
+ import jakarta.servlet.http.HttpServlet;
+ import jakarta.servlet.http.HttpServletRequest;
+ import jakarta.servlet.http.HttpServletResponse;
++import org.example.model.Category;
++import org.example.service.CategoryService;
+ 
+ import java.io.IOException;
++import java.util.List;
+ 
+ @WebServlet(name = "HomeController", urlPatterns = {"/home"})
+ public class HomeController extends HttpServlet {
+ 
++    private CategoryService categoryService;
++
++    @Override
++    public void init() throws ServletException {
++        categoryService = new CategoryService();
++    }
+ 
+     @Override
+     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+-            resp.sendRedirect("home.jsp");
++
++        // Charger les catégories
++        List<Category> categories = categoryService.getAllCategories();
++
++        // Les envoyer à la page home.jsp
++        req.setAttribute("categories", categories);
++
++        req.getRequestDispatcher("home.jsp").forward(req, resp);
+     }
+ }
+Index: src/main/java/org/example/repository/CategoryRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/repository/CategoryRepository.java b/src/main/java/org/example/repository/CategoryRepository.java
+new file mode 100644
+--- /dev/null	(date 1765293470807)
++++ b/src/main/java/org/example/repository/CategoryRepository.java	(date 1765293470807)
+@@ -0,0 +1,91 @@
++package org.example.repository;
++import org.example.model.Category;
++import org.example.model.Product;
++
++import java.util.ArrayList;
++import java.util.List;
++public class CategoryRepository {
++
++    private static List<Category> categories = new ArrayList<>(List.of(
++
++            new Category(1, "Sports Equipment", "Équipements pour différents sports",
++                    "assets/img/accessoire.jpg", // image catégorie
++                    new ArrayList<>(List.of(
++                            new Product(1, "Tapis de yoga", 49.99 ,"Tapis antidérapant pour yoga et pilates", 45 ,
++                                    "https://images.unsplash.com/photo-1599058917212-5aef8b64b3b4" , true , 4 , 555),
++                            new Product(2, "Haltères réglables", 89.99, "Haltères pour la musculation à domicile",67,
++                                    "https://images.unsplash.com/photo-1599955421446-b1f8c0d68b50" , true , 5 , 321),
++                            new Product(3, "Balles de fitness", 19.99, "Balles pour exercices de renforcement musculaire", 4,
++                                    "https://images.unsplash.com/photo-1605296867304-46d5465a13f1" , true , 3 , 213)
++                    ))
++            ),
++            new Category(2, "Vêtements de sport", "Tenues confortables et techniques pour le sport",
++                    "assets/img/vetement.jpg",
++                    new ArrayList<>(List.of(
++                            new Product(4, "T-shirt de running", 29.99, "T-shirt léger et respirant pour la course",0,
++                                    "https://images.unsplash.com/photo-1597262975002-c5c3b14bbd62", false , 0 , 0),
++                            new Product(5, "Short de sport", 24.99, "Short confortable pour toutes activités sportives",22,
++                                    "https://images.unsplash.com/photo-1600180758895-2f4a5f2c4072" , false , 0 , 0),
++                            new Product(6, "Legging de sport", 39.99, "Legging extensible et respirant pour femmes",33,
++                                    "https://images.unsplash.com/photo-1584467735877-ecbba8d6dc6e" , true , 4 , 112)
++                    ))
++            ),
++            new Category(3, "Chaussures", "Chaussures adaptées à différents sports",
++                    "assets/img/chaussure.jpg",
++                    new ArrayList<>(List.of(
++                            new Product(7, "Chaussures de running", 89.99, "Chaussures légères pour course sur route",12,
++                                    "https://images.unsplash.com/photo-1598966734936-1f4e0b9d22d5" , false , 0 , 0),
++                            new Product(8, "Chaussures de fitness", 79.99, "Chaussures polyvalentes pour salle de sport",0,
++                                    "https://images.unsplash.com/photo-1583225156763-0d7b0e2143f4" , true , 5 , 432),
++                            new Product(9, "Chaussures de randonnée", 120.00, "Chaussures résistantes pour randonnées",8,
++                                    "https://images.unsplash.com/photo-1504457040317-3e71b52b25de" , true , 4 , 256)
++                    ))
++            ),
++            new Category(4, "Accessoires", "Accessoires pour améliorer vos performances sportives",
++                    "assets/img/acc.jpg",
++                    new ArrayList<>(List.of(
++                            new Product(10, "Bouteille d'eau", 14.99, "Bouteille réutilisable pour rester hydraté",44,
++                                    "https://images.unsplash.com/photo-1589923188900-55d9f4a0a3a3" , true , 5 , 678),
++                            new Product(11, "Sac de sport", 49.99, "Sac spacieux pour transporter vos affaires",100,
++                                    "https://images.unsplash.com/photo-1574169208507-84376164871b" , false , 0 , 0),
++                            new Product(12, "Corde à sauter", 12.99, "Corde à sauter pour cardio et coordination",20,
++                                    "https://images.unsplash.com/photo-1588891231473-1a174af3ee41" , false , 0 , 0)
++                    ))
++            )
++
++    ));
++
++
++    public CategoryRepository() {
++
++    }
++
++    public List<Category> getAllCategories() {
++        return categories;
++    }
++    // Ajouter une catégorie
++    public void addCategory(Category category) {
++        categories.add(category);
++    }
++
++    // Supprimer une catégorie par id
++    public void deleteCategory(int id) {
++        categories.removeIf(c -> c.getId() == id);
++    }
++
++    // Modifier une catégorie par id
++    public boolean updateCategory(int id, Category updatedCategory) {
++        for (Category c : categories) {
++            if (c.getId() == id) {
++                c.setName(updatedCategory.getName());
++                c.setDescription(updatedCategory.getDescription());
++                if (updatedCategory.getImageUrl() != null) {
++                    c.setImageUrl(updatedCategory.getImageUrl());
++                }
++                return true; // succès
++            }
++        }
++        return false; // catégorie non trouvée
++    }
++
++}
+Index: src/main/java/org/example/controller/ProductController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.example.controller;\r\n\r\nimport jakarta.servlet.ServletException;\r\nimport jakarta.servlet.annotation.WebServlet;\r\nimport jakarta.servlet.http.HttpServlet;\r\nimport jakarta.servlet.http.HttpServletRequest;\r\nimport jakarta.servlet.http.HttpServletResponse;\r\nimport org.example.model.Category;\r\nimport org.example.model.Product;\r\nimport org.example.service.CategoryService;\r\nimport org.example.service.ProductService;\r\n\r\nimport java.io.IOException;\r\nimport java.util.List;\r\n\r\n@WebServlet(name = \"ProductController\", urlPatterns = \"/products\")\r\npublic class ProductController extends HttpServlet {\r\n\r\n    private ProductService productService;\r\n    private CategoryService categoryService;\r\n\r\n    @Override\r\n    public void init() throws ServletException {\r\n        productService = new ProductService();\r\n        categoryService = new CategoryService(); // pour retrouver la catégorie\r\n    }\r\n\r\n    @Override\r\n    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {\r\n        request.setCharacterEncoding(\"UTF-8\");\r\n        response.setCharacterEncoding(\"UTF-8\");\r\n\r\n        String action = request.getParameter(\"action\");\r\n        String categoryName = request.getParameter(\"category\");\r\n\r\n        // retrouver la catégorie\r\n        List<Category> categories = categoryService.getAllCategories();\r\n        Category category = categories.stream()\r\n                .filter(c -> c.getName().equalsIgnoreCase(categoryName))\r\n                .findFirst()\r\n                .orElse(null);\r\n\r\n        if (category == null) {\r\n            response.sendRedirect(request.getContextPath() + \"/categories\");\r\n            return;\r\n        }\r\n\r\n        if (\"add\".equals(action)) {\r\n            int id = category.getProducts()\r\n                    .stream()\r\n                    .mapToInt(Product::getId)\r\n                    .max()\r\n                    .orElse(0) + 1;            String name = request.getParameter(\"name\");\r\n            double price = Double.parseDouble(request.getParameter(\"price\"));\r\n            String desc = request.getParameter(\"description\");\r\n\r\n            Product product = new Product(id , name, price, desc);\r\n            productService.addProduct(category, product);\r\n\r\n        } else if (\"edit\".equals(action)) {\r\n            int id = Integer.parseInt(request.getParameter(\"id\"));\r\n            String originalName = request.getParameter(\"originalName\");\r\n            String newName = request.getParameter(\"name\");\r\n            double price = Double.parseDouble(request.getParameter(\"price\"));\r\n            String desc = request.getParameter(\"description\");\r\n\r\n            Product updatedProduct = new Product(id ,newName, price, desc);\r\n            productService.updateProduct(category, originalName, updatedProduct);\r\n\r\n        } else if (\"delete\".equals(action)) {\r\n            String productName = request.getParameter(\"productName\");\r\n            productService.deleteProduct(category, productName);\r\n        }\r\n\r\n        response.sendRedirect(request.getContextPath() + \"/categories\");\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/controller/ProductController.java b/src/main/java/org/example/controller/ProductController.java
+--- a/src/main/java/org/example/controller/ProductController.java	(revision 79d1f1bcf78529e5ac226f9759a79e3801b65519)
++++ b/src/main/java/org/example/controller/ProductController.java	(date 1765280085975)
+@@ -53,18 +53,22 @@
+                     .orElse(0) + 1;            String name = request.getParameter("name");
+             double price = Double.parseDouble(request.getParameter("price"));
+             String desc = request.getParameter("description");
++            String imageUrl = request.getParameter("imageUrl");
++            Double qte = request.getParameter("Quantity") != null ? Double.parseDouble(request.getParameter("Quantity")) : 0.0;
+ 
+-            Product product = new Product(id , name, price, desc);
++            Product product = new Product(id, name, price, desc , qte , imageUrl);
+             productService.addProduct(category, product);
+ 
+         } else if ("edit".equals(action)) {
+             int id = Integer.parseInt(request.getParameter("id"));
+             String originalName = request.getParameter("originalName");
+             String newName = request.getParameter("name");
+-            double price = Double.parseDouble(request.getParameter("price"));
++            Double price = Double.parseDouble(request.getParameter("price"));
+             String desc = request.getParameter("description");
++            String imageUrl = request.getParameter("imageUrl");
++            Double qte = request.getParameter("Quantity") != null ? Double.parseDouble(request.getParameter("Quantity")) : 0.0;
+ 
+-            Product updatedProduct = new Product(id ,newName, price, desc);
++            Product updatedProduct = new Product(id, newName, price, desc , qte, imageUrl);
+             productService.updateProduct(category, originalName, updatedProduct);
+ 
+         } else if ("delete".equals(action)) {
+Index: src/main/java/org/example/service/CartService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/service/CartService.java b/src/main/java/org/example/service/CartService.java
+new file mode 100644
+--- /dev/null	(date 1764855801144)
++++ b/src/main/java/org/example/service/CartService.java	(date 1764855801144)
+@@ -0,0 +1,18 @@
++package org.example.service;
++
++import jakarta.servlet.http.HttpSession;
++import org.example.model.Product;
++import org.example.repository.CartRepository;
++
++public class CartService {
++
++    private CartRepository cartRepository = new CartRepository();
++
++    public void addProduct(HttpSession session, Product product) {
++        cartRepository.addToCart(session, product);
++    }
++
++    public Object getCart(HttpSession session) {
++        return cartRepository.getCart(session);
++    }
++}
+Index: src/main/java/org/example/controller/CartController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/controller/CartController.java b/src/main/java/org/example/controller/CartController.java
+new file mode 100644
+--- /dev/null	(date 1764855829093)
++++ b/src/main/java/org/example/controller/CartController.java	(date 1764855829093)
+@@ -0,0 +1,55 @@
++package org.example.controller;
++
++import jakarta.servlet.ServletException;
++import jakarta.servlet.annotation.WebServlet;
++import jakarta.servlet.http.HttpServlet;
++import jakarta.servlet.http.HttpServletRequest;
++import jakarta.servlet.http.HttpServletResponse;
++import org.example.model.Category;
++import org.example.model.Product;
++import org.example.service.CartService;
++import org.example.service.CategoryService;
++
++import java.io.IOException;
++
++@WebServlet(name = "CartController", urlPatterns = {"/cart", "/addToCart"})
++public class CartController extends HttpServlet {
++
++    private CartService cartService;
++    private CategoryService categoryService;
++
++    @Override
++    public void init() {
++        cartService = new CartService();
++        categoryService = new CategoryService();
++    }
++
++    @Override
++    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
++
++        if (req.getServletPath().equals("/cart")) {
++            req.setAttribute("cartItems", cartService.getCart(req.getSession()));
++            req.getRequestDispatcher("cart.jsp").forward(req, resp);
++        }
++    }
++
++    @Override
++    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
++
++        if (req.getServletPath().equals("/addToCart")) {
++
++            int productId = Integer.parseInt(req.getParameter("productId"));
++
++            // Chercher dans toutes les catégories
++            for (Category cat : categoryService.getAllCategories()) {
++                for (Product p : cat.getProducts()) {
++                    if (p.getId() == productId) {
++                        cartService.addProduct(req.getSession(), p);
++                        resp.sendRedirect("home");
++                        return;
++                    }
++                }
++            }
++        }
++    }
++}
+Index: src/main/java/org/example/model/CartItem.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/model/CartItem.java b/src/main/java/org/example/model/CartItem.java
+new file mode 100644
+--- /dev/null	(date 1764855751017)
++++ b/src/main/java/org/example/model/CartItem.java	(date 1764855751017)
+@@ -0,0 +1,17 @@
++package org.example.model;
++
++public class CartItem {
++
++    private Product product;
++    private int quantity;
++
++    public CartItem(Product product) {
++        this.product = product;
++        this.quantity = 1;
++    }
++
++    public Product getProduct() { return product; }
++    public int getQuantity() { return quantity; }
++
++    public void increment() { this.quantity++; }
++}
+Index: src/main/java/org/example/repository/CartRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/repository/CartRepository.java b/src/main/java/org/example/repository/CartRepository.java
+new file mode 100644
+--- /dev/null	(date 1764862982565)
++++ b/src/main/java/org/example/repository/CartRepository.java	(date 1764862982565)
+@@ -0,0 +1,48 @@
++package org.example.repository;
++
++import jakarta.servlet.http.HttpSession;
++import org.example.model.CartItem;
++import org.example.model.Category;
++import org.example.model.Product;
++
++import java.util.ArrayList;
++import java.util.List;
++
++public class CartRepository {
++
++    public List<CartItem> getCart(HttpSession session) {
++        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
++        if (cart == null) {
++            cart = new ArrayList<>();
++            session.setAttribute("cart", cart);
++        }
++        return cart;
++    }
++
++    public void addToCart(HttpSession session, Product product) {
++        List<CartItem> cart = getCart(session);
++
++        for (CartItem item : cart) {
++            if (item.getProduct().getId() == product.getId()) {
++                item.increment();
++                session.setAttribute("cartCount", getCartCount(cart));
++                return;
++            }
++        }
++
++        cart.add(new CartItem(product));
++        session.setAttribute("cartCount", getCartCount(cart));
++    }
++    // Supprimer une  produits par id
++    public void deleteProductCart(HttpSession session, int productId) {
++        List<CartItem> cart = getCart(session);
++
++        if (cart != null) {
++            cart.removeIf(item -> item.getProduct().getId() == productId);
++        }
++    }
++
++        public int getCartCount(List<CartItem> cart) {
++        return cart.stream().mapToInt(CartItem::getQuantity).sum();
++    }
++}
+Index: src/main/webapp/cart.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/cart.jsp b/src/main/webapp/cart.jsp
+new file mode 100644
+--- /dev/null	(date 1764863218341)
++++ b/src/main/webapp/cart.jsp	(date 1764863218341)
+@@ -0,0 +1,237 @@
++<%@ page contentType="text/html;charset=UTF-8" language="java" %>
++<%@ page import="java.util.List" %>
++<%@ page import="org.example.model.CartItem" %>
++
++<%
++    List<CartItem> cart = (List<CartItem>) request.getAttribute("cartItems");
++    if (cart == null) cart = new java.util.ArrayList<>();
++
++    // Calcul du total
++    double total = 0;
++    for (CartItem item : cart) {
++        double price = item.getProduct().isPromo() ? item.getProduct().getPromoPrice() : item.getProduct().getPrice();
++        total += price * item.getQuantity();
++    }
++%>
++
++<!DOCTYPE html>
++<html lang="en">
++<head>
++    <meta charset="UTF-8">
++    <meta name="viewport" content="width=device-width, initial-scale=1.0">
++    <title>Your Shopping Cart</title>
++    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
++    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
++    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
++
++    <style>
++        :root {
++            --primary: #ff1a44;
++            --primary-dark: #e6002d;
++            --gray-light: #f8e8e93;
++        }
++
++        body {
++            font-family: 'Inter', sans-serif;
++            background: #f8f9fc;
++            min-height: 100vh;
++        }
++
++        .cart-container {
++            background: white;
++            border-radius: 20px;
++            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
++            overflow: hidden;
++        }
++
++        .cart-header {
++            background: var(--primary);
++            color: white;
++            padding: 2rem;
++            font-size: 1.8rem;
++            font-weight: 700;
++        }
++
++        .cart-item {
++            padding: 1.5rem;
++            border-bottom: 1px solid #eee;
++            transition: background 0.3s;
++        }
++
++        .cart-item:hover {
++            background: #f9f9f9;
++        }
++
++        .quantity-btn {
++            width: 36px;
++            height: 36px;
++            border: 1px solid #ddd;
++            background: white;
++            border-radius: 10px;
++            font-weight: bold;
++            display: inline-flex;
++            align-items: center;
++            justify-content: center;
++            transition: 0.2s;
++        }
++
++        .quantity-btn:hover {
++            background: var(--primary);
++            color: white;
++            border-color: var(--primary);
++        }
++
++        .quantity-input {
++            width: 60px;
++            text-align: center;
++            border: 1px solid #ddd;
++            border-radius: 10px;
++            padding: 8px;
++            margin: 0 8px;
++        }
++
++        .remove-btn {
++            color: #ff3b30;
++            font-weight: 600;
++            font-size: 0.95rem;
++        }
++
++        .remove-btn:hover {
++            color: #d70015;
++            text-decoration: underline;
++        }
++
++        .price-final {
++            font-size: 1.6rem;
++            font-weight: 700;
++            color: var(--primary);
++        }
++
++        .empty-cart {
++            text-align: center;
++            padding: 4rem 2rem;
++            color: var(--gray-light);
++        }
++
++        .empty-cart i {
++            font-size: 4rem;
++            margin-bottom: 1rem;
++            opacity: 0.5;
++        }
++    </style>
++</head>
++<body class="pt-5">
++
++<jsp:include page="shared/navbar/navbar.jsp" />
++
++<div class="container py-5">
++    <div class="row justify-content-center">
++        <div class="col-lg-10">
++
++            <div class="cart-container">
++
++                <!-- Header -->
++                <div class="cart-header d-flex justify-content-between align-items-center">
++                    <span>Your Shopping Cart</span>
++                    <span class="fs-5 fw-normal"><%= cart.size() %> item<%= cart.size() != 1 ? "s" : "" %></span>
++                </div>
++
++                <!-- Cart Items -->
++                <div class="cart-body">
++                    <% if (cart.isEmpty()) { %>
++                        <div class="empty-cart">
++                            <i class="bi bi-cart3"></i>
++                            <h3>Your cart is empty</h3>
++                            <p>Looks like you haven't added anything yet.</p>
++                            <a href="home" class="btn btn-primary btn-lg mt-3 px-5" style="background:var(--primary); border:none;">
++                                Continue Shopping
++                            </a>
++                        </div>
++                    <% } else { %>
++
++                        <% for (CartItem item : cart) {
++                            double unitPrice = item.getProduct().isPromo() ? item.getProduct().getPromoPrice() : item.getProduct().getPrice();
++                            double lineTotal = unitPrice * item.getQuantity();
++                        %>
++                        <div class="cart-item d-flex align-items-center justify-content-between flex-wrap gap-3">
++                            <div class="d-flex align-items-center gap-4 flex-grow-1">
++                                <img src="https://via.placeholder.com/100x80/111827/ffffff?text=<%= item.getProduct().getName().replace(" ", "+") %>"
++                                     alt="<%= item.getProduct().getName() %>" class="rounded-3" style="width:100px; height:80px; object-fit:cover;">
++
++                                <div>
++                                    <h5 class="mb-1 fw-semibold"><%= item.getProduct().getName() %></h5>
++                                    <p class="text-muted small mb-0">
++                                        <% if (item.getProduct().isPromo()) { %>
++                                            <del>$<%= String.format("%.2f", item.getProduct().getPrice()) %></del>
++                                            <span class="text-danger fw-bold">$<%= String.format("%.2f", unitPrice) %></span>
++                                        <% } else { %>
++                                            $<%= String.format("%.2f", unitPrice) %>
++                                        <% } %>
++                                    </p>
++                                </div>
++                            </div>
++
++                            <!-- Quantity Controls -->
++                            <div class="d-flex align-items-center">
++                                <form action="updateCart" method="post" class="d-inline">
++                                    <input type="hidden" name="productId" value="<%= item.getProduct().getId() %>">
++                                    <input type="hidden" name="newQuantity" value="<%= item.getQuantity() - 1 %>">
++                                    <button type="submit" class="quantity-btn" <%= item.getQuantity() <= 1 ? "disabled" : "" %>>−</button>
++                                </form>
++
++                                <input type="text" value="<%= item.getQuantity() %>" class="quantity-input" readonly>
++
++                                <form action="updateCart" method="post" class="d-inline">
++                                    <input type="hidden" name="productId" value="<%= item.getProduct().getId() %>">
++                                    <input type="hidden" name="newQuantity" value="<%= item.getQuantity() + 1 %>">
++                                    <button type="submit" class="quantity-btn">+</button>
++                                </form>
++                            </div>
++
++                            <!-- Line Total -->
++                            <div class="text-end" style="min-width:120px;">
++                                <div class="fw-bold fs-5">$<%= String.format("%.2f", lineTotal) %></div>
++                            </div>
++
++                            <!-- Remove Button -->
++                           <div>
++                               <form action="/servlet-jsp-gr3/cart" method="post"
++                                     onsubmit="return confirm('Remove this item from cart?');"
++                                     style="display: inline;">
++                                   <input type="hidden" name="productId" value="<%= item.getProduct().getId() %>">
++                                   <button type="submit" class="remove-btn border-0 bg-transparent text-danger fw-medium">
++                                       <i class="bi bi-trash3 me-1"></i> Remove
++                                   </button>
++                               </form>
++                           </div>
++                        </div>
++                        <% } %>
++
++                        <!-- Total & Checkout -->
++                        <div class="p-4 bg-light">
++                            <div class="d-flex justify-content-between align-items-center mb-4">
++                                <h4 class="mb-0 fw-bold">Total</h4>
++                                <span class="price-final">$<%= String.format("%.2f", total) %></span>
++                            </div>
++
++                            <div class="text-center">
++                                <a href="checkout" class="btn btn-lg text-white px-5 py-3 rounded-3"
++                                   style="background:var(--primary); font-weight:600; font-size:1.1rem;">
++                                    Proceed to Checkout
++                                </a>
++                                <div class="mt-3">
++                                    <a href="home" class="text-muted">Continue Shopping</a>
++                                </div>
++                            </div>
++                        </div>
++                    <% } %>
++                </div>
++            </div>
++
++        </div>
++    </div>
++</div>
++
++<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
++</body>
++</html>
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"b8f750a5-48f2-4f3f-adff-ad1ce537595d\" name=\"Changes\" comment=\"\" />\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"HTML File\" />\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"LogFilters\">\r\n    <option name=\"FILTER_ERRORS\" value=\"false\" />\r\n    <option name=\"FILTER_WARNINGS\" value=\"false\" />\r\n    <option name=\"FILTER_INFO\" value=\"true\" />\r\n    <option name=\"FILTER_DEBUG\" value=\"true\" />\r\n    <option name=\"CUSTOM_FILTER\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 1\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"32nU6ZLLfiF5g0xZel8VBkHctkn\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,\r\n    &quot;Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor&quot;: &quot;Run&quot;,\r\n    &quot;Maven.servlet-jsp-gr3 [clean,install].executor&quot;: &quot;Run&quot;,\r\n    &quot;Maven.servlet-jsp-gr3 [clean].executor&quot;: &quot;Run&quot;,\r\n    &quot;Maven.servlet-jsp-gr3 [install].executor&quot;: &quot;Run&quot;,\r\n    &quot;Maven.servlet-jsp-gr3 [mvn,clean,install].executor&quot;: &quot;Run&quot;,\r\n    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,\r\n    &quot;Smart Tomcat.Tom-10.executor&quot;: &quot;Run&quot;,\r\n    &quot;Smart Tomcat.Unnamed.executor&quot;: &quot;Run&quot;,\r\n    &quot;Smart Tomcat.localTomcatZip.executor&quot;: &quot;Run&quot;,\r\n    &quot;Smart Tomcat.tm10.executor&quot;: &quot;Run&quot;,\r\n    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,\r\n    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/TimberHash/Downloads/apiCategory/servlet-jsp-gr3&quot;,\r\n    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,\r\n    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,\r\n    &quot;project.structure.side.proportion&quot;: &quot;0.32458562&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;advanced.settings&quot;,\r\n    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;\r\n  },\r\n  &quot;keyToStringList&quot;: {\r\n    &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: []\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"D:\\cr\\project\\servlet-jsp-gr3\\src\\main\\webapp\" />\r\n    </key>\r\n    <key name=\"CopyClassDialog.RECENTS_KEY\">\r\n      <recent name=\"org.example.controller\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"localTomcatZip\" type=\"com.poratu.idea.plugins.tomcat\">\r\n      <predefined_log_file enabled=\"true\" id=\"Tomcat Localhost Log\" />\r\n      <predefined_log_file enabled=\"true\" id=\"Tomcat Access Log\" />\r\n      <predefined_log_file id=\"Tomcat Catalina Log\" />\r\n      <predefined_log_file id=\"Tomcat Manager Log\" />\r\n      <predefined_log_file id=\"Tomcat Host Manager Log\" />\r\n      <option name=\"adminPort\" value=\"8008\" />\r\n      <option name=\"catalinaBase\" value=\"C:\\Users\\TimberHash\\.SmartTomcat\" />\r\n      <option name=\"contextPath\" value=\"/servlet-jsp-gr3\" />\r\n      <option name=\"docBase\" value=\"C:\\Users\\TimberHash\\Downloads\\apiCategory\\servlet-jsp-gr3\\src\\main\\webapp\" />\r\n      <option name=\"extraClassPath\" value=\"\" />\r\n      <option name=\"port\" value=\"8085\" />\r\n      <option name=\"tomcatInfo\">\r\n        <TomcatInfo>\r\n          <option name=\"name\" value=\"Apache Tomcat/10.1.48\" />\r\n          <option name=\"path\" value=\"$PROJECT_DIR$/../../../../../apache-tomcat-10.1.48-windows-x64/apache-tomcat-10.1.48\" />\r\n          <option name=\"version\" value=\"10.1.48.0\" />\r\n        </TomcatInfo>\r\n      </option>\r\n      <option name=\"vmOptions\" value=\"\" />\r\n      <module name=\"servlet-jsp-gr3\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26199.169\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"b8f750a5-48f2-4f3f-adff-ad1ce537595d\" name=\"Changes\" comment=\"\" />\r\n      <created>1758055655608</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1758055655608</updated>\r\n    </task>\r\n    <servers />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 79d1f1bcf78529e5ac226f9759a79e3801b65519)
++++ b/.idea/workspace.xml	(date 1765358401234)
+@@ -4,7 +4,25 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="b8f750a5-48f2-4f3f-adff-ad1ce537595d" name="Changes" comment="" />
++    <list default="true" id="b8f750a5-48f2-4f3f-adff-ad1ce537595d" name="Changes" comment="">
++      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/CartController.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/model/CartItem.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/CartRepository.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/CategoryRepository.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/CartService.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/webapp/cart.jsp" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/CategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/CategoryController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/HomeController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/ProductController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/Category.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/Category.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/Product.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/repository/CategroyRepository.java" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/CategoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/CategoryService.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/webapp/categories.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/categories.jsp" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/webapp/home.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/home.jsp" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/webapp/shared/navbar/navbar.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/shared/navbar/navbar.jsp" afterDir="false" />
++    </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+@@ -18,6 +36,15 @@
+       </list>
+     </option>
+   </component>
++  <component name="Git.Settings">
++    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
++  </component>
++  <component name="GithubPullRequestsUISettings"><![CDATA[{
++  "selectedUrlAndAccountId": {
++    "url": "https://github.com/maryamdhieb/projetjsp.git",
++    "accountId": "035769a9-f6df-4ba8-afa1-6fc58fc77f5f"
++  }
++}]]></component>
+   <component name="LogFilters">
+     <option name="FILTER_ERRORS" value="false" />
+     <option name="FILTER_WARNINGS" value="false" />
+@@ -44,10 +71,12 @@
+     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+     &quot;Smart Tomcat.Tom-10.executor&quot;: &quot;Run&quot;,
+     &quot;Smart Tomcat.Unnamed.executor&quot;: &quot;Run&quot;,
+     &quot;Smart Tomcat.localTomcatZip.executor&quot;: &quot;Run&quot;,
+     &quot;Smart Tomcat.tm10.executor&quot;: &quot;Run&quot;,
++    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+     &quot;last_opened_file_path&quot;: &quot;C:/Users/TimberHash/Downloads/apiCategory/servlet-jsp-gr3&quot;,
+Index: src/main/webapp/shared/navbar/navbar.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!DOCTYPE html>\r\n<html>\r\n<head>\r\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\r\n<link href=\"./libraries/bootstrap/bootstrap.min.css\" rel=\"stylesheet\" >\r\n</head>\r\n<script src=\"./libraries/bootstrap/bootstrap.min.js\" integrity=\"sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p\" crossorigin=\"anonymous\"></script>\r\n<body>\r\n<% String fullname = (String) session.getAttribute(\"fullname\"); %>\r\n\r\n<nav class=\"navbar navbar-light bg-light p-3\">\r\n<a class=\"navbar-brand\" href=\"/servlet-jsp-gr3/home.jsp\"><b>IIT Store</b></a>\r\n<a class=\"navbar-brand\" href=\"/servlet-jsp-gr3/categories\"><b>Categories</b></a>\r\n<% if (fullname != null) { %>\r\n  <span class=\"navbar-text\"><b><%= fullname %></b></span>\r\n  <% } %>\r\n</nav>\r\n</body>\r\n</html>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/shared/navbar/navbar.jsp b/src/main/webapp/shared/navbar/navbar.jsp
+--- a/src/main/webapp/shared/navbar/navbar.jsp	(revision 79d1f1bcf78529e5ac226f9759a79e3801b65519)
++++ b/src/main/webapp/shared/navbar/navbar.jsp	(date 1764857104680)
+@@ -9,8 +9,18 @@
+ <% String fullname = (String) session.getAttribute("fullname"); %>
+ 
+ <nav class="navbar navbar-light bg-light p-3">
+-<a class="navbar-brand" href="/servlet-jsp-gr3/home.jsp"><b>IIT Store</b></a>
+-<a class="navbar-brand" href="/servlet-jsp-gr3/categories"><b>Categories</b></a>
++<a class="navbar-brand" href="/servlet-jsp-gr3/home">
++    <img src="/servlet-jsp-gr3/assets/img/logo111.png"
++         alt="sport"
++         height="45"
++         width="auto"></a>
++ <a class="navbar-brand" href="/servlet-jsp-gr3/categories"><b>Categories</b></a>
++ <a class="nav-link" href="cart">
++            cart
++     <span class="badge bg-danger">
++         <%= (session.getAttribute("cartCount") != null) ? session.getAttribute("cartCount") : 0 %>
++     </span>
++ </a>
+ <% if (fullname != null) { %>
+   <span class="navbar-text"><b><%= fullname %></b></span>
+   <% } %>

@@ -1,22 +1,32 @@
 package org.example.model;
 
-import javax.swing.*;
-
 public class Product {
     private int id;
     private String name;
     private double price;
     private String description;
-    private Promotion promotion;
+    private double Quantity;
+    private String imageUrl;
+    private boolean promo;
+    private double discount;
+    private double promoPrice;
 
-    public Product( int id , String name, double price, String description) {
+    public Product( int id , String name, double price, String description , double quantity , String imageUrl) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.description = description;
-        this.promotion = null; // par défaut, pas de promotion
+        this.Quantity = quantity;
+        this.imageUrl = imageUrl;
+        this.promo = false; // par défaut, pas de promotion
     }
-
+    public Product(int id, String name, double price, String description, double quantity, String imageUrl  ,
+                   boolean promo, double discount, double promoPrice) {
+        this(id, name, price , description , quantity , imageUrl);
+        this.promo = promo;
+        this.discount = discount;
+        this.promoPrice = promoPrice;
+    }
     public int getId() {
         return id;
     }
@@ -34,10 +44,39 @@ public class Product {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-    public Promotion getPromotion() { return promotion; }
-    public void setPromotion(Promotion promotion) { this.promotion = promotion; }
-    public boolean isOnPromotion() {
-        return promotion != null && promotion.isActive();
+
+    public  boolean isPromo() {
+        return promo;
+    }
+    public void setPromo(boolean promo) {
+        this.promo = promo;
+
+    }
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = this.discount;
+    }
+    public double getPromoPrice() {
+        return promoPrice;
+    }
+    public void setPromoPrice(double promoPrice) {
+        this.promoPrice = promoPrice;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+    public double getQuantity() {
+        return Quantity;
+    }
+    public void setQuantity(double quantity) {
+        Quantity = quantity;
     }
 
 

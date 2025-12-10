@@ -53,18 +53,22 @@ public class ProductController extends HttpServlet {
                     .orElse(0) + 1;            String name = request.getParameter("name");
             double price = Double.parseDouble(request.getParameter("price"));
             String desc = request.getParameter("description");
+            String imageUrl = request.getParameter("imageUrl");
+            Double qte = request.getParameter("Quantity") != null ? Double.parseDouble(request.getParameter("Quantity")) : 0.0;
 
-            Product product = new Product(id , name, price, desc);
+            Product product = new Product(id, name, price, desc , qte , imageUrl);
             productService.addProduct(category, product);
 
         } else if ("edit".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
             String originalName = request.getParameter("originalName");
             String newName = request.getParameter("name");
-            double price = Double.parseDouble(request.getParameter("price"));
+            Double price = Double.parseDouble(request.getParameter("price"));
             String desc = request.getParameter("description");
+            String imageUrl = request.getParameter("imageUrl");
+            Double qte = request.getParameter("Quantity") != null ? Double.parseDouble(request.getParameter("Quantity")) : 0.0;
 
-            Product updatedProduct = new Product(id ,newName, price, desc);
+            Product updatedProduct = new Product(id, newName, price, desc , qte, imageUrl);
             productService.updateProduct(category, originalName, updatedProduct);
 
         } else if ("delete".equals(action)) {

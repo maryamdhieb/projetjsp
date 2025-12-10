@@ -2,18 +2,20 @@ package org.example.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class Category {
     private  int id;
     private String name;
     private String description;
+    private String imageUrl;
     private List<Product> products;
 
+    public  Category() {}
     // Constructeur principal avec la liste des produits
-    public Category(int id , String name, String description, List<Product> products) {
+    public Category(int id , String name, String description, String imageUrl , List<Product> products ) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.imageUrl = imageUrl;
         this.products = products;
     }
 
@@ -52,5 +54,12 @@ public class Category {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
