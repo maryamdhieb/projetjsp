@@ -11,7 +11,7 @@ public class ProductRepository {
 
     // Ajouter un produit en BD
     public void addProduct(Product p) {
-        String sql = "INSERT INTO product (name, price, description, quantity, imageUrl, category_id) " +
+        String sql = "INSERT INTO product (name, price, description, quantity, image, category_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
@@ -21,7 +21,7 @@ public class ProductRepository {
             ps.setDouble(2, p.getPrice());
             ps.setString(3, p.getDescription());
             ps.setDouble(4, p.getQuantity());
-            ps.setString(5, p.getImageUrl());
+            ps.setBytes(5, p.getImage());
             ps.setInt(6, p.getCategoryId());
 
             ps.executeUpdate();
@@ -35,7 +35,7 @@ public class ProductRepository {
     // Modifier un produit dans la BD
     public void updateProduct(Product product) {
 
-        String sql = "UPDATE product SET name=?, price=?, description=?, quantity=?, imageUrl=?, category_id=? WHERE id=?";
+        String sql = "UPDATE product SET name=?, price=?, description=?, quantity=?, image=?, category_id=? WHERE id=?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -44,7 +44,7 @@ public class ProductRepository {
             ps.setDouble(2, product.getPrice());
             ps.setString(3, product.getDescription());
             ps.setDouble(4, product.getQuantity());
-            ps.setString(5, product.getImageUrl());
+            ps.setBytes(5, product.getImage());
             ps.setInt(6, product.getCategoryId());
             ps.setInt(7, product.getId());
 

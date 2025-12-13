@@ -156,7 +156,7 @@ public class PromotionRepository {
                             rs.getDouble("price"),
                             rs.getString("description"),
                             rs.getDouble("quantity"),
-                            rs.getString("imageUrl"),
+                            rs.getBytes("image"),
                             rs.getInt("category_id")
                     );
                     products.add(p);

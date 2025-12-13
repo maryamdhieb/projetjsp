@@ -28,9 +28,7 @@ public class CategoryRepository {
                 int catId = rsCategory.getInt("id");
                 String name = rsCategory.getString("name");
                 String description = rsCategory.getString("description");
-                String imageUrl = rsCategory.getString("imageUrl");
-
-                // ----- Charger produits -----
+                byte [] image = rsCategory.getBytes("image");
                 List<Product> products = new ArrayList<>();
 
                 try (PreparedStatement ps = conn.prepareStatement(sqlProduct)) {
@@ -43,7 +41,7 @@ public class CategoryRepository {
                                     rsProd.getDouble("price"),
                                     rsProd.getString("description"),
                                     rsProd.getDouble("quantity"),
-                                    rsProd.getString("imageUrl"),
+                                    rsProd.getBytes("image"),
                                     rsProd.getInt("category_id")
                             );
                             products.add(product);
@@ -55,7 +53,7 @@ public class CategoryRepository {
                         catId,
                         name,
                         description,
-                        imageUrl,
+                        image,
                         products
                 );
 
@@ -72,14 +70,14 @@ public class CategoryRepository {
     // Ajouter une catégorie
     public void addCategory(Category category) {
 
-        String sql = "INSERT INTO category (name, description, imageUrl) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO category (name, description, image) VALUES (?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, category.getName());
             ps.setString(2, category.getDescription());
-            ps.setString(3, category.getImageUrl());
+            ps.setBytes(3, category.getImage());
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -112,14 +110,14 @@ public class CategoryRepository {
     // Modifier une catégorie
     public boolean updateCategory(int id, Category updatedCategory) {
 
-        String sql = "UPDATE category SET name = ?, description = ?, imageUrl = ? WHERE id = ?";
+        String sql = "UPDATE category SET name = ?, description = ?, image = ? WHERE id = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, updatedCategory.getName());
             ps.setString(2, updatedCategory.getDescription());
-            ps.setString(3, updatedCategory.getImageUrl());
+            ps.setBytes(3, updatedCategory.getImage());
             ps.setInt(4, id);
 
             return ps.executeUpdate() > 0;
@@ -131,58 +129,5 @@ public class CategoryRepository {
         return false;
     }
 
-    // Récupérer toutes les catégories avec leurs produits (même méthode que getAllCategories)
-    public List<Category> getAllCategoriesWithProducts() {
-        List<Category> categories = new ArrayList<>();
-        String sqlCategories = "SELECT * FROM category ORDER BY id";
-        String sqlProducts = "SELECT * FROM product WHERE category_id = ?";
-        try (Connection conn = DBConnection.getConnection();
-             Statement stmtCategories = conn.createStatement();
-             ResultSet rsCategories = stmtCategories.executeQuery(sqlCategories)) {
 
-            while (rsCategories.next()) {
-                int categoryId = rsCategories.getInt("id");
-                String name = rsCategories.getString("name");
-                String description = rsCategories.getString("description");
-                String imageUrl = rsCategories.getString("imageUrl");
-
-                // Récupérer les produits pour cette catégorie
-                List<Product> products = new ArrayList<>();
-                try (PreparedStatement psProducts = conn.prepareStatement(sqlProducts)) {
-                    psProducts.setInt(1, categoryId);
-                    try (ResultSet rsProducts = psProducts.executeQuery()) {
-                        while (rsProducts.next()) {
-                            Product product = new Product(
-                                    rsProducts.getInt("id"),
-                                    rsProducts.getString("name"),
-                                    rsProducts.getDouble("price"),
-                                    rsProducts.getString("description"),
-                                    rsProducts.getDouble("quantity"),
-                                    rsProducts.getString("imageUrl"),
-                                    rsProducts.getBoolean("promo"),
-                                    rsProducts.getDouble("discount"),
-                                    rsProducts.getDouble("promoPrice"),
-                                    rsProducts.getInt("category_id")
-                            );
-                            products.add(product);
-                        }
-                    }
-                }
-
-                Category category = new Category(
-                        categoryId,
-                        name,
-                        description,
-                        imageUrl,
-                        products
-                );
-                categories.add(category);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return categories;
-
-    }
 }

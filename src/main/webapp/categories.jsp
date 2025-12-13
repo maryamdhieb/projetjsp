@@ -277,14 +277,15 @@
 
         if (categories != null && !categories.isEmpty()) {
             for (Category cat : categories) {
-                String bannerImg = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&q=80";
-                if (cat.getName().toLowerCase().contains("cardio")) bannerImg = "https://images.unsplash.com/photo-1517836357463-d25dfeac68b8?ixlib=rb-4.0.3&auto=format&fit=crop&q=80";
-                else if (cat.getName().toLowerCase().contains("musculation")) bannerImg = "https://images.unsplash.com/photo-1581129724900-9d0e2b0252d3?ixlib=rb-4.0.3&auto=format&fit=crop&q=80";
-                else if (cat.getName().toLowerCase().contains("yoga")) bannerImg = "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&q=80";
-    %>
+             String bannerStyle = "background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://via.placeholder.com/1920x600/333333/666666?text=Aucune+image') center/cover no-repeat;";
+                 if (cat.getImageBase64() != null && !cat.getImageBase64().isEmpty()) {
+                     bannerStyle = "background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('data:image/jpeg;base64," + cat.getImageBase64() + "') center/cover no-repeat;";
+                 }
+
+%>
 
     <div class="category-block">
-        <div class="category-banner" style="background-image: url('<%= bannerImg %>');">
+        <div class="category-banner" style="<%= bannerStyle %>">
         <button class="admin-btn edit-category-btn"
                 data-bs-toggle="modal" data-bs-target="#editCategoryModal"
                 data-id="<%= cat.getId() %>"
@@ -315,11 +316,13 @@
                 List<Product> products = cat.getProducts();
                 if (products != null && !products.isEmpty()) {
                     for (Product p : products) {
-                        String prodImg = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&q=80";
-            %>
+                        String prodBg = "background: #333 url('https://via.placeholder.com/400x300/333333/666666?text=Aucune+image') center/cover no-repeat;";
+                            if (p.getImageBase64() != null && !p.getImageBase64().isEmpty()) {
+                                prodBg = "background: url('data:image/jpeg;base64," + p.getImageBase64() + "') center/cover no-repeat;";
+                            }   %>
 
             <div class="product-card">
-                <div class="product-image" style="background-image: url('<%= prodImg %>')">
+                    <div class="product-image" style="<%= prodBg %>">
                     <div class="admin-actions">
                         <button class="admin-btn edit-product-btn"
                                 data-bs-toggle="modal" data-bs-target="#editProductModal"
@@ -391,7 +394,7 @@
 <!-- Modal Add Category -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/categories">
+        <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/categories" enctype="multipart/form-data">
             <input type="hidden" name="action" value="add"/>
 
             <!-- En-tête stylé -->
@@ -427,7 +430,12 @@
                 </div>
             </div>
 
-
+            <div class="col-12">
+                <label class="form-label fw-bold text-dark fs-5">
+                    <i class="fas fa-image text-warning me-2"></i> Image
+                </label>
+                <input type="file" name="image" accept="image/*" class="form-control form-control-lg"/>
+            </div>
             <!-- Pied de page -->
             <div class="modal-footer bg-light border-0 py-4 px-5 justify-content-between">
 
@@ -445,7 +453,7 @@
 <!-- Modal Edit Category -->
 <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/categories">
+        <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/categories" enctype="multipart/form-data">
             <input type="hidden" name="action" value="edit"/>
             <input type="hidden" name="id" id="edit-category-id"/>
              <input type="hidden" name="category" id="edit-category"/>
@@ -471,7 +479,12 @@
                             <i class="fas fa-align-left text-primary me-2"></i> Description
                         </label>
                          <textarea required name="description" id="edit-category-desc" rows="4" class="form-control rounded-3 shadow-sm border-0"></textarea>
-
+                    <div class="col-12">
+                        <label class="form-label fw-bold text-dark fs-5">
+                            <i class="fas fa-image text-warning me-2"></i> Image
+                        </label>
+                        <input type="file" name="image" accept="image/*" class="form-control form-control-lg"/>
+                    </div>
 
                         <!-- BOUTON AJOUTER UN PRODUIT DEPUIS LA CATÉGORIE -->
                         <div class="text-center mt-5">
@@ -546,7 +559,7 @@
 <!-- Modal Add Product -->
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/products">
+        <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/products" enctype="multipart/form-data">
             <input type="hidden" name="action" value="add"/>
             <input type="hidden" name="categoryId" id="add-category"/>
 
@@ -587,6 +600,12 @@
                         </label>
                         <textarea name="description" rows="3" placeholder="Enter product description" class="form-control rounded-3 shadow-sm border-0"></textarea>
                     </div>
+                    <div class="col-12">
+                        <label class="form-label fw-bold text-dark fs-5">
+                            <i class="fas fa-image text-warning me-2"></i> Image
+                        </label>
+                        <input type="file" name="image" accept="image/*" class="form-control form-control-lg" required/>
+                    </div>
                 </div>
             </div>
 
@@ -602,48 +621,53 @@
 <!-- Modal Edit Product -->
 <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/products">
+        <form class="modal-content shadow-lg border-0 overflow-hidden"
+              method="post"
+              action="<%= cp %>/products"
+              enctype="multipart/form-data">
             <input type="hidden" name="action" value="edit"/>
-            <input  type="hidden" name="id" id="edit-id"/>
-            <input  type="hidden" name="categoryId" id="edit-product-categoryId"/>
-
+            <input type="hidden" name="id" id="edit-id"/>
+            <input type="hidden" name="categoryId" id="edit-product-categoryId"/>
             <div class="modal-header bg-gradient text-grey border-0 py-4" style="background: linear-gradient(135deg, #ff3b30, #ff6b6b);">
                 <h5 class="modal-title fs-3 fw-bold" id="editProductModalLabel">
                     <i class="fas fa-edit me-3"></i> Modify Product
                 </h5>
                 <button type="button" class="btn-close btn-close-grey" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
             <div class="modal-body bg-white p-5">
                 <div class="row g-4">
                     <div class="col-md-12">
                         <label class="form-label fw-bold text-dark fs-5">
                             <i class="fas fa-tag text-danger me-2"></i> Product Name
                         </label>
-                        <input required name="name" id="edit-name" placeholder="Enter product name" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
+                        <input required name="name" id="edit-name" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold text-dark fs-5">
                             <i class="fas fa-euro-sign text-success me-2"></i> Quantity
                         </label>
-                        <input required name="Quantity" id="edit-Quantity" placeholder="Enter product quantity" type="number" min="0" step="0.01" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
+                        <input required name="Quantity" id="edit-Quantity" type="number" min="0" step="0.01" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold text-dark fs-5">
                             <i class="fas fa-euro-sign text-success me-2"></i> Price
                         </label>
-                        <input required name="price" id="edit-price" type="number" min="0" step="0.01" placeholder="Enter price" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
+                        <input required name="price" id="edit-price" type="number" min="0" step="0.01" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
                     </div>
-
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <label class="form-label fw-bold text-dark fs-5">
                             <i class="fas fa-align-left text-primary me-2"></i> Description
                         </label>
-                        <textarea name="description" id="edit-desc" rows="3" placeholder="Enter product description" class="form-control rounded-3 shadow-sm border-0"></textarea>
+                        <textarea name="description" id="edit-desc" rows="3" class="form-control rounded-3 shadow-sm border-0"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-bold text-dark fs-5">
+                            <i class="fas fa-image text-warning me-2"></i> Image
+                        </label>
+                        <input type="file" name="image" accept="image/*" class="form-control form-control-lg"/>
                     </div>
                 </div>
             </div>
-
             <div class="modal-footer bg-light border-0 py-4 px-5 justify-content-between">
                 <button type="button" class="btn btn-outline-secondary btn-lg px-5 rounded-pill" data-bs-dismiss="modal">Cancel</button>
                 <button type="submit" class="btn btn-danger btn-lg px-3 rounded-pill shadow">
@@ -686,9 +710,8 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    /*******************************
-     * 1. Modal Ajout Produit (depuis un bouton de catégorie)
-     *******************************/
+
+     //Modal Ajout Produit (depuis un bouton de catégorie)
     document.querySelectorAll('[data-bs-target="#addProductModal"]').forEach(btn => {
         btn.addEventListener('click', () => {
             document.getElementById('add-category').value = btn.dataset.category;
@@ -696,9 +719,7 @@
     });
 
 
-    /*******************************
-     * 2. Ouvrir le modal Edit Category + pré-remplissage
-     *******************************/
+     //Ouvrir le modal Edit Category + pré-remplissage
     document.querySelectorAll('.edit-category-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const id = btn.dataset.id;
@@ -714,10 +735,7 @@
         });
     });
 
-
-    /*******************************
-     * 3. Ouvrir le modal Delete Category
-     *******************************/
+     //Pré-remplir modal Delete Category
     document.querySelectorAll('.delete-category-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.getElementById('delete-category-id').value = btn.dataset.id;
@@ -726,9 +744,8 @@
     });
 
 
-    /*******************************
-     * 4. Pré-remplir modal Edit Product
-     *******************************/
+
+    //Pré-remplir modal Edit Product
     document.querySelectorAll('.edit-product-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.getElementById('edit-id').value = btn.dataset.id;
@@ -741,9 +758,7 @@
     });
 
 
-    /*******************************
-     * 5. Pré-remplir modal Delete Product
-     *******************************/
+     // Pré-remplir modal Delete Product
     document.querySelectorAll('.delete-product-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.getElementById('delete-id').value = btn.dataset.id;
@@ -752,9 +767,7 @@
     });
 
 
-    /*******************************
-     * 6. Bouton "Add Product From Category" dans le modal Edit Category
-     *******************************/
+     //Bouton "Add Product From Category" dans le modal Edit Category
     document.querySelectorAll('.add-product-from-category-btn').forEach(btn => {
         btn.addEventListener('click', () => {
 

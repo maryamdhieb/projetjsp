@@ -1,4 +1,5 @@
 package org.example.model;
+import java.util.Base64;
 
 public class Product {
     private int id;
@@ -6,29 +7,35 @@ public class Product {
     private double price;
     private String description;
     private double quantity;
-    private String imageUrl;
+    private byte[] image;
     private boolean promo;
     private double discount;
     private double promoPrice;
     private int categoryId;
+    private String imageBase64;
 
-    public Product(int id, String name, double price, String description, double quantity, String imageUrl, int categoryId) {
+    public Product(int id, String name, double price, String description, double quantity, byte[] image, int categoryId) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.description = description;
         this.quantity = quantity;
-        this.imageUrl = imageUrl;
+        this.image = image;
         this.categoryId = categoryId;
+        this.imageBase64 = (image != null && image.length > 0)
+                ? Base64.getEncoder().encodeToString(image)
+                : null;
     }
 
-    public Product(int id, String name, double price, String description, double quantity,
-                   String imageUrl, boolean promo, double discount, double promoPrice, int categoryId) {
-        this(id, name, price, description, quantity, imageUrl, categoryId);
+    public Product(int id, String name, double price, String description, double quantity, byte[] image
+                   , boolean promo, double discount, double promoPrice, int categoryId) {
+        this(id, name, price, description, quantity, image, categoryId);
         this.promo = promo;
         this.discount = discount;
         this.promoPrice = promoPrice;
-    }
+        this.imageBase64 = (image != null && image.length > 0)
+                ? Base64.getEncoder().encodeToString(image)
+                : null;    }
 
 
     public int getId() { return id; }
@@ -46,18 +53,19 @@ public class Product {
     public double getQuantity() { return quantity; }
     public void setQuantity(double quantity) { this.quantity = quantity; }
 
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public byte[] getImage() { return image; }
+    public void setImage(byte[] image) { this.image = image; }
 
     public boolean isPromo() { return promo; }
     public void setPromo(boolean promo) { this.promo = promo; }
 
     public double getDiscount() { return discount; }
-    public void setDiscount(double discount) { this.discount = discount; } // 🔥 FIX
+    public void setDiscount(double discount) { this.discount = discount; }
 
     public double getPromoPrice() { return promoPrice; }
     public void setPromoPrice(double promoPrice) { this.promoPrice = promoPrice; }
 
     public int getCategoryId() { return categoryId; }
     public void setCategoryId(int categoryId) { this.categoryId = categoryId; }
+    public String getImageBase64() { return imageBase64; }
 }

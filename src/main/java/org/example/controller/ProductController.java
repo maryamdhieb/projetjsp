@@ -5,12 +5,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import org.example.model.Product;
 import org.example.service.ProductService;
+import jakarta.servlet.annotation.MultipartConfig;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @WebServlet(name = "ProductController", urlPatterns = "/products")
+@MultipartConfig(maxFileSize = 1024 * 1024 * 10)
 public class ProductController extends HttpServlet {
 
     private ProductService productService;
@@ -36,7 +40,8 @@ public class ProductController extends HttpServlet {
                 String name = request.getParameter("name");
                 String priceStr = request.getParameter("price");
                 String desc = request.getParameter("description");
-                String imageUrl = request.getParameter("imageUrl");
+                Part imagePart = request.getPart("image");
+                byte[] image = getImageBytes(imagePart);
                 String quantityStr = request.getParameter("Quantity");
                 String categoryIdStr = request.getParameter("categoryId");
 
@@ -44,7 +49,7 @@ public class ProductController extends HttpServlet {
                 double quantity = (quantityStr != null && !quantityStr.isEmpty()) ? Double.parseDouble(quantityStr) : 0.0;
                 int categoryId = (categoryIdStr != null && !categoryIdStr.isEmpty()) ? Integer.parseInt(categoryIdStr) : 0;
 
-                Product product = new Product(0, name, price, desc, quantity, imageUrl, categoryId);
+                Product product = new Product(0, name, price, desc, quantity, image, categoryId);
                 productService.addProduct(product);
 
             } else if ("edit".equals(action)) {
@@ -53,7 +58,8 @@ public class ProductController extends HttpServlet {
                 String newName = request.getParameter("name");
                 String priceStr = request.getParameter("price");
                 String desc = request.getParameter("description");
-                String imageUrl = request.getParameter("imageUrl");
+                Part imagePart = request.getPart("image");
+                byte[] image = getImageBytes(imagePart);
                 String quantityStr = request.getParameter("Quantity");
                 String categoryIdStr = request.getParameter("categoryId");
 
@@ -62,7 +68,7 @@ public class ProductController extends HttpServlet {
                 double quantity = (quantityStr != null && !quantityStr.isEmpty()) ? Double.parseDouble(quantityStr) : 0.0;
                 int categoryId = (categoryIdStr != null && !categoryIdStr.isEmpty()) ? Integer.parseInt(categoryIdStr) : 0;
 
-                Product updatedProduct = new Product(id, newName, price, desc, quantity, imageUrl, categoryId);
+                Product updatedProduct = new Product(id, newName, price, desc, quantity, image, categoryId);
                 productService.updateProduct(updatedProduct);
 
             } else if ("delete".equals(action)) {
@@ -82,6 +88,14 @@ public class ProductController extends HttpServlet {
             // Gérer d'autres erreurs
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erreur serveur");
+        }
+    }
+    private byte[] getImageBytes(Part part) throws IOException {
+        if (part == null || part.getSize() == 0) {
+            return null;
+        }
+        try (InputStream inputStream = part.getInputStream()) {
+            return inputStream.readAllBytes();
         }
     }
 }

@@ -2,39 +2,36 @@ package org.example.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Base64;
 public class Category {
 
     private int id;
     private String name;
     private String description;
-    private String imageUrl;
+    private  byte[] image ;
     private List<Product> products;
+    private String imageBase64;
 
-    public Category() {
-        products = new ArrayList<>();
-    }
 
-    public Category(String name, String description) {
+    public Category(String name, String description, byte[] image) {
         this.name = name;
         this.description = description;
+        this.image = image;
         this.products = new ArrayList<>();
+        this.imageBase64 = (image != null && image.length > 0)
+                ? Base64.getEncoder().encodeToString(image)
+                : null;
     }
 
-    // Nouveau constructeur pour inclure l'image
-    public Category(String name, String description, String imageUrl) {
-        this.name = name;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.products = new ArrayList<>();
-    }
-
-    public Category(int id, String name, String description, String imageUrl, List<Product> products) {
+    public Category(int id, String name, String description, byte[] image, List<Product> products) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.imageUrl = imageUrl;
+        this.image = image;
         this.products = products;
+        this.imageBase64 = (image != null && image.length > 0)
+                ? Base64.getEncoder().encodeToString(image)
+                : null;
     }
 
     // Getters et setters
@@ -47,9 +44,10 @@ public class Category {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public byte[] getImage() { return image; }
+    public void setImage(byte[] image) { this.image = image; }
 
     public List<Product> getProducts() { return products; }
     public void setProducts(List<Product> products) { this.products = products; }
+    public String getImageBase64() { return imageBase64; }
 }
