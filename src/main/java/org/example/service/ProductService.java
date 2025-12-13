@@ -1,26 +1,25 @@
 package org.example.service;
 
-import org.example.model.Category;
 import org.example.model.Product;
 import org.example.repository.ProductRepository;
 
 public class ProductService {
 
-    private final ProductRepository productRepository;
+    private final ProductRepository productRepository = new ProductRepository();
 
-    public ProductService() {
-        this.productRepository = new ProductRepository();
+    public void addProduct(Product p) {
+        productRepository.addProduct(p);
     }
 
-    public void addProduct(Category category, Product product) {
-        productRepository.addProduct(category, product);
+    public void updateProduct(Product p) {
+        productRepository.updateProduct(p);
     }
 
-    public void updateProduct(Category category, String originalName, Product updatedProduct) {
-        productRepository.updateProduct(category, originalName, updatedProduct);
+    public void deleteProduct(int id) {
+        productRepository.deleteProduct(id);
     }
 
-    public void deleteProduct(Category category, String productName) {
-        productRepository.deleteProduct(category, productName);
+    public Object getAllProducts() {
+        return productRepository.getAllProducts();
     }
 }

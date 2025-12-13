@@ -12,8 +12,8 @@ public class AuthFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
-        String fullname = (String) req.getSession().getAttribute("fullname");
-        if (fullname == null || fullname.isEmpty()) {
+        String name = (String) req.getSession().getAttribute("name");
+        if (name == null || name.isEmpty()) {
             ((HttpServletResponse) response).sendRedirect("index.jsp");
         } else {
             filterChain.doFilter(request, response);

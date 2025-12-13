@@ -24,24 +24,21 @@ public class LoginController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         String email = request.getParameter("uname");
         String password = request.getParameter("psw");
 
+        // Vérification dans la base via UserService → UserRepository
         Optional<User> user = userService.findUserByEmailAndPwd(email, password);
 
         if (user.isPresent()) {
-            request.getSession().setAttribute("fullname", user.get().getFullname());
-            if (user.get().getRole().equals("ADMIN")) {
-                request.getSession().setAttribute("isAdmin", true);
-            } else {
-                request.getSession().setAttribute("isAdmin", false);
+            request.getSession().setAttribute("name", user.get().getFullname());
+            request.getSession().setAttribute("role", user.get().getRole());
+            request.getSession().setAttribute("isAdmin", user.get().getRole().equals("ADMIN"));
 
-            }
             response.sendRedirect("home");
-
         } else {
             response.sendRedirect("error.jsp");
         }
     }
-
 }

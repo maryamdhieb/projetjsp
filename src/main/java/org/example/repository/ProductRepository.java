@@ -1,37 +1,78 @@
 package org.example.repository;
 
-import org.example.model.Category;
 import org.example.model.Product;
+import org.example.DBConnection;
 
-import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class ProductRepository {
 
-    // Ajouter un produit à une catégorie
-    public void addProduct(Category category, Product product) {
-        if (category.getProducts() != null) {
-            category.getProducts().add(product);
+    // Ajouter un produit en BD
+    public void addProduct(Product p) {
+        String sql = "INSERT INTO product (name, price, description, quantity, imageUrl, category_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, p.getName());
+            ps.setDouble(2, p.getPrice());
+            ps.setString(3, p.getDescription());
+            ps.setDouble(4, p.getQuantity());
+            ps.setString(5, p.getImageUrl());
+            ps.setInt(6, p.getCategoryId());
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
-    // Supprimer un produit d'une catégorie
-    public void deleteProduct(Category category, String productName) {
-        if (category.getProducts() != null) {
-            category.getProducts().removeIf(p -> p.getName().equalsIgnoreCase(productName));
+
+    // Modifier un produit dans la BD
+    public void updateProduct(Product product) {
+
+        String sql = "UPDATE product SET name=?, price=?, description=?, quantity=?, imageUrl=?, category_id=? WHERE id=?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, product.getName());
+            ps.setDouble(2, product.getPrice());
+            ps.setString(3, product.getDescription());
+            ps.setDouble(4, product.getQuantity());
+            ps.setString(5, product.getImageUrl());
+            ps.setInt(6, product.getCategoryId());
+            ps.setInt(7, product.getId());
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println("Erreur UPDATE product : " + e.getMessage());
         }
     }
 
-    // Modifier un produit d'une catégorie
-    public void updateProduct(Category category, String originalName, Product updatedProduct) {
-        if (category.getProducts() != null) {
-            for (Product p : category.getProducts()) {
-                if (p.getName().equalsIgnoreCase(originalName)) {
-                    p.setName(updatedProduct.getName());
-                    p.setPrice(updatedProduct.getPrice());
-                    p.setDescription(updatedProduct.getDescription());
-                    return;
-                }
-            }
+    // Supprimer un produit dans la BD
+    public void deleteProduct(int productId) {
+
+        String sql = "DELETE FROM product WHERE id=?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, productId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println("Erreur DELETE product : " + e.getMessage());
         }
+    }
+
+    public Object getAllProducts() {
+        return null;
+
     }
 }

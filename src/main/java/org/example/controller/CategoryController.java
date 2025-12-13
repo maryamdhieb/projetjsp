@@ -44,26 +44,24 @@ public class CategoryController extends HttpServlet {
         if ("add".equals(action)) {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
-            Category category = new Category(name, description);
+            String imageUrl = request.getParameter("imageUrl");
+
+            Category category = new Category(name, description, imageUrl);
             categoryService.addCategory(category);
 
         } else if ("edit".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
             String newName = request.getParameter("name");
             String description = request.getParameter("description");
+            String imageUrl = request.getParameter("imageUrl");
 
-            // On crée un Category temporaire pour mise à jour
-            Category updatedCategory = new Category();
-            updatedCategory.setName(newName);
-            updatedCategory.setDescription(description);
-
+            Category updatedCategory = new Category(newName, description, imageUrl);
             boolean success = categoryService.updateCategory(id, updatedCategory);
             if (!success) {
-                // gérer l'erreur si l'id n'existe pas
                 request.setAttribute("error", "Catégorie introuvable !");
             }
-        }
-        else if ("delete".equals(action)) {
+
+        } else if ("delete".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
             categoryService.deleteCategory(id);
         }

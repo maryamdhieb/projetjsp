@@ -5,77 +5,83 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.model.Category;
 import org.example.model.Product;
-import org.example.service.CategoryService;
 import org.example.service.ProductService;
 
 import java.io.IOException;
-import java.util.List;
 
 @WebServlet(name = "ProductController", urlPatterns = "/products")
 public class ProductController extends HttpServlet {
 
     private ProductService productService;
-    private CategoryService categoryService;
 
     @Override
     public void init() throws ServletException {
         productService = new ProductService();
-        categoryService = new CategoryService(); // pour retrouver la catégorie
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
         String action = request.getParameter("action");
-        String categoryName = request.getParameter("category");
+        String contextPath = request.getContextPath();
 
-        // retrouver la catégorie
-        List<Category> categories = categoryService.getAllCategories();
-        Category category = categories.stream()
-                .filter(c -> c.getName().equalsIgnoreCase(categoryName))
-                .findFirst()
-                .orElse(null);
+        try {
+            if ("add".equals(action)) {
 
-        if (category == null) {
-            response.sendRedirect(request.getContextPath() + "/categories");
-            return;
+                String name = request.getParameter("name");
+                String priceStr = request.getParameter("price");
+                String desc = request.getParameter("description");
+                String imageUrl = request.getParameter("imageUrl");
+                String quantityStr = request.getParameter("Quantity");
+                String categoryIdStr = request.getParameter("categoryId");
+
+                double price = (priceStr != null && !priceStr.isEmpty()) ? Double.parseDouble(priceStr) : 0.0;
+                double quantity = (quantityStr != null && !quantityStr.isEmpty()) ? Double.parseDouble(quantityStr) : 0.0;
+                int categoryId = (categoryIdStr != null && !categoryIdStr.isEmpty()) ? Integer.parseInt(categoryIdStr) : 0;
+
+                Product product = new Product(0, name, price, desc, quantity, imageUrl, categoryId);
+                productService.addProduct(product);
+
+            } else if ("edit".equals(action)) {
+
+                String idStr = request.getParameter("id");
+                String newName = request.getParameter("name");
+                String priceStr = request.getParameter("price");
+                String desc = request.getParameter("description");
+                String imageUrl = request.getParameter("imageUrl");
+                String quantityStr = request.getParameter("Quantity");
+                String categoryIdStr = request.getParameter("categoryId");
+
+                int id = (idStr != null && !idStr.isEmpty()) ? Integer.parseInt(idStr) : 0;
+                double price = (priceStr != null && !priceStr.isEmpty()) ? Double.parseDouble(priceStr) : 0.0;
+                double quantity = (quantityStr != null && !quantityStr.isEmpty()) ? Double.parseDouble(quantityStr) : 0.0;
+                int categoryId = (categoryIdStr != null && !categoryIdStr.isEmpty()) ? Integer.parseInt(categoryIdStr) : 0;
+
+                Product updatedProduct = new Product(id, newName, price, desc, quantity, imageUrl, categoryId);
+                productService.updateProduct(updatedProduct);
+
+            } else if ("delete".equals(action)) {
+
+                String idStr = request.getParameter("id");
+                int productId = (idStr != null && !idStr.isEmpty()) ? Integer.parseInt(idStr) : 0;
+                productService.deleteProduct(productId);
+            }
+
+            response.sendRedirect(contextPath + "/categories");
+
+        } catch (NumberFormatException e) {
+            // Gérer une entrée invalide
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Paramètre numérique invalide");
+        } catch (Exception e) {
+            // Gérer d'autres erreurs
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erreur serveur");
         }
-
-        if ("add".equals(action)) {
-            int id = category.getProducts()
-                    .stream()
-                    .mapToInt(Product::getId)
-                    .max()
-                    .orElse(0) + 1;            String name = request.getParameter("name");
-            double price = Double.parseDouble(request.getParameter("price"));
-            String desc = request.getParameter("description");
-            String imageUrl = request.getParameter("imageUrl");
-            Double qte = request.getParameter("Quantity") != null ? Double.parseDouble(request.getParameter("Quantity")) : 0.0;
-
-            Product product = new Product(id, name, price, desc , qte , imageUrl);
-            productService.addProduct(category, product);
-
-        } else if ("edit".equals(action)) {
-            int id = Integer.parseInt(request.getParameter("id"));
-            String originalName = request.getParameter("originalName");
-            String newName = request.getParameter("name");
-            Double price = Double.parseDouble(request.getParameter("price"));
-            String desc = request.getParameter("description");
-            String imageUrl = request.getParameter("imageUrl");
-            Double qte = request.getParameter("Quantity") != null ? Double.parseDouble(request.getParameter("Quantity")) : 0.0;
-
-            Product updatedProduct = new Product(id, newName, price, desc , qte, imageUrl);
-            productService.updateProduct(category, originalName, updatedProduct);
-
-        } else if ("delete".equals(action)) {
-            String productName = request.getParameter("productName");
-            productService.deleteProduct(category, productName);
-        }
-
-        response.sendRedirect(request.getContextPath() + "/categories");
     }
 }

@@ -7,26 +7,30 @@ import java.util.List;
 
 public class CategoryService {
 
-    private final CategoryRepository categroyRepository;
+    private final CategoryRepository categoryRepository;
 
     public CategoryService() {
-        this.categroyRepository = new CategoryRepository();
+        this.categoryRepository = new CategoryRepository();
     }
 
+
     public List<Category> getAllCategories() {
-        return categroyRepository.getAllCategories();
+        return categoryRepository.getAllCategories();
     }
 
     public void addCategory(Category category) {
-        categroyRepository.addCategory(category); // utiliser l'instance et non la classe
+        categoryRepository.addCategory(category);
     }
 
     public boolean updateCategory(int id, Category updatedCategory) {
-        categroyRepository.updateCategory( id, updatedCategory);
-        return false;
+        return categoryRepository.updateCategory(id, updatedCategory);
     }
 
     public void deleteCategory(int id) {
-        categroyRepository.deleteCategory(id);
+        categoryRepository.deleteCategory(id);
+    }
+    public static List<Category> getAllCategoriesWithProducts() {
+        CategoryRepository categoryRepository = new CategoryRepository();
+        return categoryRepository.getAllCategories();
     }
 }

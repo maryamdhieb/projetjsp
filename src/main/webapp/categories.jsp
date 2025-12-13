@@ -292,15 +292,13 @@
                 data-desc="<%= cat.getDescription() != null ? cat.getDescription().replace("\"","\\\"") : "" %>">
             <i class="fas fa-edit"></i>
         </button>
-          <form method="post" action="<%= cp %>/categories" style="display:inline;">
-              <input type="hidden" name="action" value="delete"/>
-              <input type="hidden" name="id" value="<%= cat.getId() %>"/>
-
-              <button type="submit" class="admin-btn bg-danger"
-                      onclick="return confirm('Delete this category ?');">
-                  <i class="fas fa-trash"></i>
-              </button>
-          </form>
+         <button class="admin-btn bg-danger delete-category-btn"
+                 data-bs-toggle="modal"
+                 data-bs-target="#deleteCategoryModal"
+                 data-id="<%= cat.getId() %>"
+                 data-name="<%= cat.getName() %>">
+             <i class="fas fa-trash"></i>
+         </button>
 
         <div>
             <h2 class="category-title"><%= cat.getName().toUpperCase() %></h2>
@@ -309,11 +307,7 @@
             </div>
         </div>
         </div>
-          <button class="btn btn-add-product-floating mt-3"
-                data-bs-toggle="modal" data-bs-target="#addProductModal"
-                data-category="<%= cat.getId() %>">
-            <i class="fas fa-plus "></i>
-        </button>
+
 
         <div class="product-grid">
 
@@ -330,26 +324,28 @@
                         <button class="admin-btn edit-product-btn"
                                 data-bs-toggle="modal" data-bs-target="#editProductModal"
                                 data-id="<%= p.getId() %>"
-                                data-category="<%= cat.getName() %>"
+                                data-category-id="<%= cat.getId() %>"
                                 data-name="<%= p.getName() %>"
                                 data-price="<%= p.getPrice() %>"
+                                data-Quantity="<%=p.getQuantity() %>"
                                 data-desc="<%= p.getDescription() != null ? p.getDescription().replace("\"","\\\"") : "" %>">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <form method="post" action="<%= cp %>/products" style="display:inline">
-                            <input type="hidden" name="action" value="delete"/>
-                            <input type="hidden" name="category" value="<%= cat.getName() %>"/>
-                            <input type="hidden" name="productName" value="<%= p.getName() %>"/>
-                            <button type="submit" class="admin-btn bg-danger"
-                                    onclick="return confirm('delete this product ?')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
+
+                      <button class="admin-btn bg-danger delete-product-btn"
+                              data-bs-toggle="modal"
+                              data-bs-target="#deleteProductModal"
+                              data-id="<%= p.getId() %>"
+                              data-name="<%= p.getName() %>">
+                          <i class="fas fa-trash"></i>
+                      </button>
+
                     </div>
                 </div>
                 <div class="product-info">
                     <h3 class="product-name"><%= p.getName() %></h3>
-                    <p class="product-desc"><%= p.getDescription() != null ? p.getDescription() : "Produit haut de gamme" %></p>
+                    <p class="product-desc"><%= p.getDescription() %></p>
+                    <p class="product-quantity" style="color: white;">Quantity: <strong><%= String.format("%.2f", p.getQuantity()) %></strong></p>
                     <div class="product-price"><%= String.format("%.2f", p.getPrice()) %> €</div>
                 </div>
 
@@ -363,7 +359,7 @@
                     </p>
                      <button class="btn btn-add-product-floating mt-3"
                             data-bs-toggle="modal" data-bs-target="#addProductModal"
-                            data-category="<%= cat.getName() %>">
+                            data-category="<%= cat.getId() %>">
                         <i class="fas fa-plus "></i>
                     </button>
                 </div>
@@ -376,11 +372,11 @@
 
     <div class="text-center py-5 my-5">
         <i class="fas fa-dumbbell display-1 mb-4" style="color: var(--primary); opacity: 0.3;"></i>
-        <h2 class="text-white">Votre catalogue est vide</h2>
-        <p class="lead text-muted mb-5">Commencez par créer votre première catégorie sportive !</p>
+        <h2 class="text-white">Empty catalog</h2>
+        <p class="lead text-muted mb-5">Create sportif catalog!</p>
         <button class="btn btn-lg px-5" style="background: var(--primary); color: white; font-size: 1.4rem;"
                 data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-            <i class="fas fa-plus me-3"></i> Créer la première catégorie
+            <i class="fas fa-plus me-3"></i> Create First Category
         </button>
     </div>
 
@@ -389,6 +385,8 @@
 </div>
 
 <!---------------------------------------------------- CRUD Category --------------------------------------------------->
+
+
 
 <!-- Modal Add Category -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
@@ -429,8 +427,10 @@
                 </div>
             </div>
 
+
             <!-- Pied de page -->
             <div class="modal-footer bg-light border-0 py-4 px-5 justify-content-between">
+
                 <button type="button" class="btn btn-outline-secondary btn-lg px-5 rounded-pill" data-bs-dismiss="modal">
                     Cancel
                 </button>
@@ -472,11 +472,22 @@
                         </label>
                          <textarea required name="description" id="edit-category-desc" rows="4" class="form-control rounded-3 shadow-sm border-0"></textarea>
 
+
+                        <!-- BOUTON AJOUTER UN PRODUIT DEPUIS LA CATÉGORIE -->
+                        <div class="text-center mt-5">
+                            <button type="button" class="btn btn-success btn-lg rounded-pill shadow px-5 add-product-from-category-btn"
+                                    data-bs-toggle="modal" data-bs-target="#addProductModal"
+                                    data-category-id="">
+                                <i class="fas fa-dumbbell fa-bounce me-3"></i>
+                                Add Product to This Category
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="modal-footer bg-light border-0 py-4 px-5 justify-content-between">
+
                 <button type="button" class="btn btn-outline-secondary btn-lg px-5 rounded-pill" data-bs-dismiss="modal">
                     Cancel
                 </button>
@@ -488,14 +499,57 @@
     </div>
 </div>
 
-<!---------------------------------------------------- CRUD Product --------------------------------------------------->
 
+<!-- Modal Delete Category -->
+<div class="modal fade" id="deleteCategoryModal" tabindex="-1 pq-1" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/categories">
+            <input type="hidden" name="action" value="delete"/>
+            <input type="hidden" name="id" id="delete-category-id"/>
+
+            <div class="modal-header bg-gradient text-white border-0 py-4"
+                 style="background: linear-gradient(135deg, #ff3b30, #ff6b6b);">
+                <h5 class="modal-title fs-3 fw-bold w-100 text-center" id="deleteCategoryModalLabel">
+                    <i class="fas fa-dumpster-fire fa-2x me-3"></i>
+                    Delete Category
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body bg-white p-5 text-center">
+                <i class="fas fa-exclamation-triangle text-danger fa-4x mb-4"></i>
+
+                <p class="fs-5 text-dark mb-4">
+                    This action is <span class="text-danger fw-bold">irreversible</span>.<br>
+                    All products in the category <span class="text-danger fw-bold">"<span id="delete-category-name"></span>"</span>
+                    will be <span class="text-danger fw-bold">permanently deleted</span>.
+                </p>
+
+                <p class="fs-4 fw-bold text-danger mt-4">
+                    Are you sure?
+                </p>
+            </div>
+
+            <div class="modal-footer bg-light border-0 py-4 px-5 justify-content-between">
+                <button type="button" class="btn btn-outline-secondary btn-lg px-5 rounded-pill" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-danger btn-lg px-5 rounded-pill shadow">
+                    <i class="fas fa-trash-alt me-2"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!---------------------------------------------------- CRUD Product --------------------------------------------------->
 <!-- Modal Add Product -->
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/products">
             <input type="hidden" name="action" value="add"/>
-            <input type="hidden" name="category" id="add-category"/>
+            <input type="hidden" name="categoryId" id="add-category"/>
+
 
             <div class="modal-header bg-gradient text-grey border-0 py-4" style="background: linear-gradient(135deg, #ff3b30, #ff6b6b);">
                 <h5 class="modal-title fs-3 fw-bold" id="addProductModalLabel">
@@ -510,29 +564,34 @@
                         <label class="form-label fw-bold text-dark fs-5">
                             <i class="fas fa-tag text-danger me-2"></i> Product Name
                         </label>
-                        <input required name="name" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
+                        <input required name="name" placeholder="Enter product name" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-dark fs-5">
+                            <i class="fas fa-euro-sign text-success me-2"></i> Quantity
+                        </label>
+                        <input required name="Quantity"  placeholder="Enter product quantity" type="number" min="0" step="0.01" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-bold text-dark fs-5">
                             <i class="fas fa-euro-sign text-success me-2"></i> Price
                         </label>
-                        <input required name="price" type="number" step="0.01" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
+                        <input required name="price" type="number" min="0" step="0.01" placeholder="Enter price" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-bold text-dark fs-5">
                             <i class="fas fa-align-left text-primary me-2"></i> Description
                         </label>
-                        <textarea name="description" rows="3" class="form-control rounded-3 shadow-sm border-0"></textarea>
+                        <textarea name="description" rows="3" placeholder="Enter product description" class="form-control rounded-3 shadow-sm border-0"></textarea>
                     </div>
                 </div>
             </div>
 
             <div class="modal-footer bg-light border-0 py-4 px-5 justify-content-between">
-                <button type="button" class="btn btn-outline-secondary btn-lg px-5 rounded-pill" data-bs-dismiss="modal">
-                    Cancel
-                </button>
+                <button type="button" class="btn btn-outline-secondary btn-lg px-5 rounded-pill" data-bs-dismiss="modal">Cancel</button>
                 <button type="submit" class="btn btn-success btn-lg px-3 rounded-pill shadow">
                     <i class="fas fa-plus me-2"></i> Add Product
                 </button>
@@ -540,18 +599,14 @@
         </form>
     </div>
 </div>
-
-
-<!-- Modal Edit Product  -->
+<!-- Modal Edit Product -->
 <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/products">
             <input type="hidden" name="action" value="edit"/>
-            <input type="hidden" name="category" id="edit-category"/>
-            <input type="hidden" name="originalName" id="edit-originalName"/>
-            <input type="hidden" name="id" id="edit-id"/>
+            <input  type="hidden" name="id" id="edit-id"/>
+            <input  type="hidden" name="categoryId" id="edit-product-categoryId"/>
 
-            <!-- En-tête stylé -->
             <div class="modal-header bg-gradient text-grey border-0 py-4" style="background: linear-gradient(135deg, #ff3b30, #ff6b6b);">
                 <h5 class="modal-title fs-3 fw-bold" id="editProductModalLabel">
                     <i class="fas fa-edit me-3"></i> Modify Product
@@ -559,44 +614,69 @@
                 <button type="button" class="btn-close btn-close-grey" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <!-- Corps du modal – fond blanc propre -->
             <div class="modal-body bg-white p-5">
                 <div class="row g-4">
-
                     <div class="col-md-12">
                         <label class="form-label fw-bold text-dark fs-5">
-                            <i class="fas fa-tag text-danger me-2"></i>Product Name
+                            <i class="fas fa-tag text-danger me-2"></i> Product Name
                         </label>
-                        <input required name="name" id="edit-name" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
+                        <input required name="name" id="edit-name" placeholder="Enter product name" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
                     </div>
-
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-dark fs-5">
+                            <i class="fas fa-euro-sign text-success me-2"></i> Quantity
+                        </label>
+                        <input required name="Quantity" id="edit-Quantity" placeholder="Enter product quantity" type="number" min="0" step="0.01" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
+                    </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold text-dark fs-5">
                             <i class="fas fa-euro-sign text-success me-2"></i> Price
                         </label>
-                        <input required name="price" id="edit-price" type="number" step="0.01"
-                               class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
-
+                        <input required name="price" id="edit-price" type="number" min="0" step="0.01" placeholder="Enter price" class="form-control form-control-lg rounded-pill shadow-sm border-0"/>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-bold text-dark fs-5">
                             <i class="fas fa-align-left text-primary me-2"></i> Description
                         </label>
-                        <textarea name="description" id="edit-desc" rows="3" class="form-control rounded-3 shadow-sm border-0"> </textarea>
-
+                        <textarea name="description" id="edit-desc" rows="3" placeholder="Enter product description" class="form-control rounded-3 shadow-sm border-0"></textarea>
                     </div>
-
                 </div>
             </div>
 
-            <!-- Pied de page -->
             <div class="modal-footer bg-light border-0 py-4 px-5 justify-content-between">
-                <button type="button" class="btn btn-outline-secondary btn-lg px-5 rounded-pill" data-bs-dismiss="modal">
-                    Cancel
-                </button>
+                <button type="button" class="btn btn-outline-secondary btn-lg px-5 rounded-pill" data-bs-dismiss="modal">Cancel</button>
                 <button type="submit" class="btn btn-danger btn-lg px-3 rounded-pill shadow">
                     <i class="fas fa-save me-2"></i> Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Modal Delete Product -->
+<div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form class="modal-content shadow-lg border-0 overflow-hidden" method="post" action="<%= cp %>/products">
+            <input  type="hidden" name="action" value="delete"/>
+            <input   type="hidden"  name="id" id="delete-id"/>
+
+
+            <div class="modal-header bg-gradient text-grey border-0 py-4" style="background: linear-gradient(135deg, #ff3b30, #ff6b6b);">
+                <h5 class="modal-title fs-3 fw-bold" id="deleteProductModalLabel">
+                    <i class="fas fa-trash me-3"></i> Delete Product
+                </h5>
+                <button type="button" class="btn-close btn-close-grey" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body bg-white p-5 text-center">
+                <p class="fs-5">Are you sure you want to delete this product?</p>
+                <p id="delete-product-name" class="fw-bold text-danger fs-4"></p>
+            </div>
+
+            <div class="modal-footer bg-light border-0 py-4 px-5 justify-content-between">
+                <button type="button" class="btn btn-outline-secondary btn-lg px-5 rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger btn-lg px-5 rounded-pill shadow">
+                    <i class="fas fa-trash me-2"></i> Delete
                 </button>
             </div>
         </form>
@@ -606,22 +686,38 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    //modal ajout categories
-  document.querySelectorAll('[data-bs-target="#addProductModal"]').forEach(btn => {
+    /*******************************
+     * 1. Modal Ajout Produit (depuis un bouton de catégorie)
+     *******************************/
+    document.querySelectorAll('[data-bs-target="#addProductModal"]').forEach(btn => {
         btn.addEventListener('click', () => {
-            document.getElementById('add-category')?.setAttribute('value', btn.dataset.category);
-        });
-    });
-    // Open edit category modal
-    document.querySelectorAll('.edit-category-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.getElementById('edit-category-id').value = btn.dataset.id;
-            document.getElementById('edit-category-name').value = btn.dataset.name;
-            document.getElementById('edit-category-desc').value = btn.dataset.desc;
+            document.getElementById('add-category').value = btn.dataset.category;
         });
     });
 
-    // Open delete category modal
+
+    /*******************************
+     * 2. Ouvrir le modal Edit Category + pré-remplissage
+     *******************************/
+    document.querySelectorAll('.edit-category-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+
+            // Pré-remplissage des champs
+            document.getElementById('edit-category-id').value = id;
+            document.getElementById('edit-category-name').value = btn.dataset.name;
+            document.getElementById('edit-category-desc').value = btn.dataset.desc;
+
+            // IMPORTANT : injecter l'id dans le bouton "Add Product From Category"
+            document.querySelector('.add-product-from-category-btn')
+                .setAttribute('data-category-id', id);
+        });
+    });
+
+
+    /*******************************
+     * 3. Ouvrir le modal Delete Category
+     *******************************/
     document.querySelectorAll('.delete-category-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.getElementById('delete-category-id').value = btn.dataset.id;
@@ -629,19 +725,57 @@
         });
     });
 
-    // Pré-remplir modal édition produit
-   document.querySelectorAll('.edit-product-btn').forEach(btn => {
-       btn.addEventListener('click', () => {
-           document.getElementById('edit-id').value = btn.dataset.id;
-           document.getElementById('edit-category').value = btn.dataset.category;
-           document.getElementById('edit-originalName').value = btn.dataset.name;
-           document.getElementById('edit-name').value = btn.dataset.name;
-           document.getElementById('edit-price').value = btn.dataset.price;
-           document.getElementById('edit-desc').value = btn.dataset.desc;
-       });
-   });
+
+    /*******************************
+     * 4. Pré-remplir modal Edit Product
+     *******************************/
+    document.querySelectorAll('.edit-product-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('edit-id').value = btn.dataset.id;
+            document.getElementById('edit-product-categoryId').value = btn.dataset.categoryId;
+            document.getElementById('edit-name').value = btn.dataset.name;
+            document.getElementById('edit-price').value = btn.dataset.price;
+            document.getElementById('edit-Quantity').value = btn.dataset.quantity;
+            document.getElementById('edit-desc').value = btn.dataset.desc;
+        });
+    });
+
+
+    /*******************************
+     * 5. Pré-remplir modal Delete Product
+     *******************************/
+    document.querySelectorAll('.delete-product-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('delete-id').value = btn.dataset.id;
+            document.getElementById('delete-product-name').innerText = btn.dataset.name;
+        });
+    });
+
+
+    /*******************************
+     * 6. Bouton "Add Product From Category" dans le modal Edit Category
+     *******************************/
+    document.querySelectorAll('.add-product-from-category-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+
+            // Récupérer l'ID de la catégorie
+            const categoryId = btn.dataset.categoryId;
+
+            // Injecter dans le modal Add Product
+            document.getElementById('add-category').value = categoryId;
+
+            // Fermer Edit Category
+            const editCatModal = bootstrap.Modal.getInstance(document.getElementById('editCategoryModal'));
+            editCatModal.hide();
+
+            // Ouvrir Add Product
+            const addProdModal = new bootstrap.Modal(document.getElementById('addProductModal'));
+            addProdModal.show();
+        });
+    });
 
 </script>
+
 
 
 
