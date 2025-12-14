@@ -15,6 +15,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+     <title>SportShop</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -33,12 +34,11 @@
             position: relative;
             background: linear-gradient(135deg, rgba(231, 76, 60, 0.92), rgba(243, 156, 18, 0.88)),
                         url('https://media.istockphoto.com/id/2157690234/vector/hot-deal-sale-banner-vector-template-with-bold-3d-text-thunder-and-flash-lightning-effects.jpg?s=612x612&w=0&k=20&c=MSX9wGXWXM8q6eMZka1qfuRydPxTfAcf6uBdvXg_758=') center/cover no-repeat;
-            padding: 4rem 2rem;
+            padding: 2rem 2rem;
             text-align: center;
             color: white;
             margin: 0 0 2rem 0;
-            border-radius: 0 0 1.5rem 1.5rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-bottom: 4px solid var(--primary);
         }
 
         .hero-promo h1 {

@@ -10,9 +10,10 @@ public class Product {
     private byte[] image;
     private boolean promo;
     private double discount;
-    private double promoPrice;
+    private Double promoPrice;
     private int categoryId;
     private String imageBase64;
+
 
     public Product(int id, String name, double price, String description, double quantity, byte[] image, int categoryId) {
         this.id = id;
@@ -62,10 +63,19 @@ public class Product {
     public double getDiscount() { return discount; }
     public void setDiscount(double discount) { this.discount = discount; }
 
-    public double getPromoPrice() { return promoPrice; }
-    public void setPromoPrice(double promoPrice) { this.promoPrice = promoPrice; }
+    public Double getPromoPrice() { return promoPrice; }
+
+    public void setPromoPrice(Double promoPrice) {
+        this.promoPrice = promoPrice;
+    }
+
 
     public int getCategoryId() { return categoryId; }
     public void setCategoryId(int categoryId) { this.categoryId = categoryId; }
     public String getImageBase64() { return imageBase64; }
+
+
+    public double getEffectivePrice() {
+        return promoPrice != null ? promoPrice : price;
+    }
 }

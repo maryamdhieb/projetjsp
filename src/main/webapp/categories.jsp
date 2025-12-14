@@ -35,6 +35,29 @@
         }
 
 
+ /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--secondary) 0%, #003D6E 100%);
+            padding: 3rem 0;
+            color:#d71313;
+            border-bottom: 4px solid var(--primary);
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
 
         /* Catégorie bannière */
         .category-block {
@@ -263,8 +286,15 @@
 
 <div class="container-fluid px-4">
 
-    <h1 class="page-title"></i>SPORTS CATALOG</h1>
-    <p class="page-subtitle">Manage your complete e-commerce product catalog</p>
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">
+                <i class="fas fa-cogs me-3"></i>Admin Dashboard
+            </h1>
+            <p class="page-subtitle">Manage your complete sports equipment catalog</p>
+        </div>
+    </div>
 
 
     <button class="fab-main shadow-lg" data-bs-toggle="modal" data-bs-target="#addCategoryModal">

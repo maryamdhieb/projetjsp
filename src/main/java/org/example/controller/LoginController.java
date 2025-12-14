@@ -32,6 +32,7 @@ public class LoginController extends HttpServlet {
         Optional<User> user = userService.findUserByEmailAndPwd(email, password);
 
         if (user.isPresent()) {
+            request.getSession().setAttribute("id", user.get().getId());
             request.getSession().setAttribute("name", user.get().getFullname());
             request.getSession().setAttribute("role", user.get().getRole());
             request.getSession().setAttribute("isAdmin", user.get().getRole().equals("ADMIN"));

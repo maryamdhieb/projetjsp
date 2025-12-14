@@ -167,4 +167,36 @@ public class PromotionRepository {
         return products;
     }
 
+    public Promotion findActivePromotionByProduct(int productId) {
+
+        String sql = """
+            SELECT p.*
+            FROM promotion p
+            JOIN product_promotion pp ON p.id = pp.promotion_id
+            WHERE pp.product_id = ?
+            AND CURDATE() BETWEEN p.startDate AND p.endDate
+        """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, productId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return new Promotion(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("description"),
+                        rs.getDouble("value"),
+                        rs.getString("type"),
+                        rs.getDate("startDate").toLocalDate(),
+                        rs.getDate("endDate").toLocalDate()
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

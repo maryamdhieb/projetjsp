@@ -85,4 +85,23 @@ public class PromotionService {
         return repo.getProductsForPromotion(promotionId);
     }
 
+    public void applyPromotion(Product product) {
+
+        Promotion promo = repo.findActivePromotionByProduct(product.getId());
+
+        if (promo != null && promo.isActive()) {
+
+            double promoPrice = product.getPrice();
+
+            if ("PERCENTAGE".equalsIgnoreCase(promo.getType())) {
+                promoPrice -= product.getPrice() * promo.getValue() / 100;
+            } else if ("FIXED".equalsIgnoreCase(promo.getType())) {
+                promoPrice -= promo.getValue();
+            }
+
+            if (promoPrice < 0) promoPrice = 0;
+
+            product.setPromoPrice(promoPrice);
+        }
+    }
 }

@@ -75,4 +75,24 @@ public class ProductRepository {
         return null;
 
     }
+    public boolean decreaseStock(int productId, int quantity) {
+        String sql = "UPDATE product SET quantity = quantity - ? WHERE id = ? AND quantity >= ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, quantity);
+            ps.setInt(2, productId);
+            ps.setInt(3, quantity);
+
+            int rowsUpdated = ps.executeUpdate();
+
+            return rowsUpdated > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false; // en cas d'erreur
+    }
 }

@@ -9,6 +9,11 @@ import jakarta.servlet.http.Part;
 import org.example.model.Product;
 import org.example.service.ProductService;
 import jakarta.servlet.annotation.MultipartConfig;
+import java.sql.Connection;
+import org.example.DBConnection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -89,6 +94,7 @@ public class ProductController extends HttpServlet {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erreur serveur");
         }
+
     }
     private byte[] getImageBytes(Part part) throws IOException {
         if (part == null || part.getSize() == 0) {
@@ -97,5 +103,23 @@ public class ProductController extends HttpServlet {
         try (InputStream inputStream = part.getInputStream()) {
             return inputStream.readAllBytes();
         }
+    }
+    // Diminuer le stock
+    public boolean decreaseStock(int productId, int quantity) {
+        String sql = "UPDATE product SET stock = stock - ? WHERE id = ? AND stock >= ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, quantity);
+            ps.setInt(2, productId);
+            ps.setInt(3, quantity);
+
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
